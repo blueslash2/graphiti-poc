@@ -7,9 +7,10 @@
 
 把官方example的面向过程写法改为了面向对象写法, 便于基于SRP单一职责原则进行维护。
 把官方example同步写法改造为异步写法，提升数十倍（实测9.6倍左右）构建和查询效率。
-官方写法是需要用OPENAI_API_KEY的，将其改造为依托本地 Ollama的方式，减少cost消耗。
+官方使用了OPENAI_API_KEY，将其改造为依托本地部署的方式，减少cost消耗。
 
 整个工程如下所示:
+```text
 src/
 ├── config.py                   # 配置管理
 ├── graphiti_service_client.py # 远程服务客户端
@@ -17,8 +18,9 @@ src/
 └── knowledge_graph_searcher.py # 知识图谱查询器
 main.py                         # 基础演示
 main2.py                        # 增量更新演示
+```
 - 配置相关的py文件有config.py以及log_config.py
-- 资源管理器相关的py文件有neo4j_connector.py以及ollama_graphiti_manager.py
+- 资源管理器相关的py文件有neo4j_connector.py以及llm_graphiti_manager.py
 - 与图谱相关的操作工具py文件有 knowledge_graph_builder.py,knowledge_graph_searcher.py以及diagnose_graph_change.py
 - 测试用例相关的py文件有main.py以及main2.py
 
@@ -26,7 +28,7 @@ main2.py                        # 增量更新演示
 
 ### 配置文件config.py
 
-config.py主要是用来维护各种配置。比如Neo4j数据库的配置、Ollama配置、日志配置等。
+config.py主要是用来维护各种配置。比如Neo4j数据库的配置、LLM配置、日志配置等。
 
 ### 日志配置文件log_config.py
 
@@ -36,9 +38,9 @@ config.py主要是用来维护各种配置。比如Neo4j数据库的配置、Oll
 
 这个文件主要负责连接neo4j，它主要提供设置初始化连接(__init___、设置日志级别(_setup_logging)、加载环境变量(_load_environment)、连接参数校验(_validate_connection_params)、连接参数获取(get_connection_params)、连接参数更新(update_connection_params)等操作。另外，它提供了一个异步方法(clean_database)来清理数据库中的数据，方便反复实验。
 
-### graphiti管理器 ollama_graphiti_manager.py
+### graphiti管理器 llm_graphiti_manager.py
 
-因为我从OPENAI切换为了本地ollama，所以这里起名为ollama_graphiti_manager.py。它主要的职责是，配置依托ollama的生成模型（setup_ollama_config）、配置依托ollama的嵌入模型（setup_embedder）、配置cross_encoder(setup_cross_encoder) 、异步的初始化graphiti实例（initialize_graphiti）、异步方法设置数据库并清理和构建索引（setup_database）、关闭连接（close_connection）等操作。
+因为我从OPENAI切换为了本地大模型，所以这里起名为llm_graphiti_manager.py。它主要的职责是，配置生成模型（setup_llm_config）、配置嵌入模型（setup_embedder）、配置cross_encoder(setup_cross_encoder) 、异步的初始化graphiti实例（initialize_graphiti）、异步方法设置数据库并清理和构建索引（setup_database）、关闭连接（close_connection）等操作。
 
 ### kg关键能力-知识图谱构造器 knowledge_graph_builder.py
 
@@ -99,17 +101,66 @@ main.py测试用例主要用来演示于知识图谱构建以及查询相关的�
 
 ## 快速开始
 ```bash
-# 1. 配置
-cp .env.example .env
-# 编辑.env填写远程服务地址
+# 1. 安装 uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 2. 安装依赖
-pip install -r requirements.txt
+# 2. 创建并激活环境
+uv venv --python 3.11
+source .venv/bin/activate
 
-# 3. 运行演示
+# 3. 安装依赖
+uv sync
+
+# 4. 运行演示
 python main.py
 ```
 ## 远程服务要求（改造中）
 - Graphiti服务需暴露REST API
 - 支持 /health, /api/v1/episodes, /api/v1/search 端点
 - 详见 CONFIGURATION.md
+
+## 依赖管理
+使用 uv 管理依赖：
+- 添加生产依赖：uv add package
+- 添加开发依赖：uv add --dev package
+- 更新锁文件：uv lock
+- 查看依赖树：uv pip tree
+传统 requirements.txt 已废弃，改用 pyproject.toml 和 uv.lock。
+
+## 团队协作规范
+
+### 新成员加入流程
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/your-team/graphiti-poc.git
+cd graphiti-poc
+
+# 2. 一键安装（uv会自动读取 pyproject.toml 和 uv.lock）
+uv sync
+
+# 3. 激活环境
+source .venv/bin/activate
+
+# 4. 验证
+python main.py
+```
+## 生产部署优化
+### Dockerfile（使用 uv）
+```dockerfile
+FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
+
+WORKDIR /app
+
+# 复制依赖文件
+COPY pyproject.toml uv.lock ./
+
+# 安装依赖（无虚拟环境，直接装到容器）
+RUN uv pip sync --system
+
+# 复制代码
+COPY . .
+
+# 运行
+CMD ["python", "main.py"]
+```
