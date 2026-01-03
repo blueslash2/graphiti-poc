@@ -4,7 +4,7 @@ from neo4j_connector import Neo4jConnector
 from llm_graphiti_manager import LLMGraphitiManager
 from knowledge_graph_builder import KnowledgeGraphBuilder
 from knowledge_graph_searcher import KnowledgeGraphSearcher
-from graphiti_core.nodes import EpisodeType
+from langchain_mcp_client import EpisodeType
 from config import config
 
 # 设置全面的日志配置
@@ -25,6 +25,7 @@ class KnowledgeGraphApplication:
         self.logger = logging.getLogger(__name__)
         self.neo4j_connector = None
         self.graphiti_manager = None
+        #self.mcp_session_manager = None
         self.graph_builder = None
         self.searcher = None
 
@@ -34,27 +35,37 @@ class KnowledgeGraphApplication:
         try:
             # 子步骤1: 初始化Neo4j连接
             self.logger.info("子步骤1: 初始化Neo4j连接...")
-            neo4j_config = config.get_neo4j_config()
-            self.neo4j_connector = Neo4jConnector(
-                uri=neo4j_config['uri'],
-                user=neo4j_config['user'],
-                password=neo4j_config['password']
-            )
-            self.neo4j_connector.validate_connection()
-            self.logger.info("Neo4j连接器初始化完成")
+            #neo4j_config = config.get_neo4j_config()
+            #self.neo4j_connector = Neo4jConnector(
+            #    uri=neo4j_config['uri'],
+            #    user=neo4j_config['user'],
+            #    password=neo4j_config['password']
+            #)
+            #self.neo4j_connector.validate_connection()
+            #self.logger.info("Neo4j连接器初始化完成")
+            self.logger.info("...免除（由graphiti MCP代管）。")
+
             # 子步骤2: 初始化LLM和Graphiti管理器
             self.logger.info("子步骤2: 初始化LLM和Graphiti管理器...")
-            self.graphiti_manager = LLMGraphitiManager(self.neo4j_connector)
-            await self.graphiti_manager.initialize_graphiti()
-            await self.graphiti_manager.setup_database()
-            self.logger.info("LLM和Graphiti管理器初始化完成")
+            #self.graphiti_manager = LLMGraphitiManager(self.neo4j_connector)
+            #await self.graphiti_manager.initialize_graphiti()
+            #await self.graphiti_manager.setup_database()
+            #self.logger.info("LLM和Graphiti管理器初始化完成")
+            self.logger.info("...免除（LLM和Graphiti数据库由MCP代管")
+
+            # 子步骤2.1：初始化Graphiti MCP客户端
+            #self.logger.info("子步骤2.1: 创建MCP客户端...")
+            #self.mcp_session_manager = await get_mcp_manager()
+            #self.logger.info("子步骤2.2: 初始化MCP客户端...")
+            #await self.mcp_session_manager.initialize()
+
             # 子步骤3: 初始化知识图谱构建器
             self.logger.info("子步骤3: 初始化知识图谱构建器...")
-            self.graph_builder = KnowledgeGraphBuilder(self.graphiti_manager)
+            self.graph_builder = KnowledgeGraphBuilder()
             self.logger.info("知识图谱构建器初始化完成")
             # 子步骤4: 初始化搜索器
             self.logger.info("子步骤4: 初始化搜索器...")
-            self.searcher = KnowledgeGraphSearcher(self.graphiti_manager)
+            self.searcher = KnowledgeGraphSearcher()
             self.logger.info("搜索器初始化完成")
             self.logger.info("应用初始化完成")
         except Exception as e:
@@ -130,15 +141,21 @@ class KnowledgeGraphApplication:
             search_step += 1
             self.logger.info(f"搜索步骤 {search_step}: 执行中心节点搜索...")
             print(f"\n{'='*20} 搜索步骤 {search_step}: 中心节点搜索演示 {'='*20}")
-            if basic_results:
-                center_node_uuid = basic_results[0].source_node_uuid
-                center_results = await self.searcher.center_node_search(
-                    '谁是软件工程师？', center_node_uuid
-                )
-                self.searcher.print_search_results(center_results, "中心节点搜索结果")
-                self.logger.info(f"搜索步骤 {search_step}: 中心节点搜索完成")
+            if basic_results and basic_results[0]:
+                center_node_uuid = basic_results[0].get('uuid')
+                if center_node_uuid:
+                    self.logger.info(f"使用中心节点UUID: {center_node_uuid}")
+                    center_results = await self.searcher.center_node_search(
+                        '谁是软件工程师？', center_node_uuid
+                    )
+                    self.searcher.print_search_results(center_results, "中心节点搜索结果")
+                    self.logger.info(f"搜索步骤 {search_step}: 中心节点搜索完成")
+                else:
+                    self.logger.warning("无法从搜索结果中获取中心节点UUID")
+                    center_results = []
             else:
                 self.logger.warning(f"搜索步骤 {search_step}: 跳过中心节点搜索（无基本搜索结果）")
+                center_results = []
             # 搜索步骤4: 综合搜索
             search_step += 1
             self.logger.info(f"搜索步骤 {search_step}: 执行综合搜索...")

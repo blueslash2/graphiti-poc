@@ -7,6 +7,21 @@ import logging
 
 def setup_comprehensive_logging():
     """设置全面的日志配置"""
+    # 创建控制台处理器
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    
+    # 创建格式化器
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    console_handler.setFormatter(formatter)
+    
+    # 获取根日志记录器并添加处理器
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    root_logger.addHandler(console_handler)
+    
     # 设置Graphiti核心库的日志级别
     graphiti_modules = [
         'graphiti_core.utils.maintenance.edge_operations',

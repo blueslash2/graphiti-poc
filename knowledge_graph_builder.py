@@ -3,19 +3,21 @@ import logging
 import time
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional, Union
-from graphiti_core.nodes import EpisodeType
+from langchain_mcp_client import EpisodeType, add_episode
 
 
 class KnowledgeGraphBuilder:
     """通用知识图谱构建类"""
-    def __init__(self, graphiti_manager):
-        self.graphiti_manager = graphiti_manager
+    def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def create_episode_data(self, content: Union[str, Dict[str, Any]], 
-                           episode_type: EpisodeType = EpisodeType.text,
-                           description: str = "通用信息",
-                           name: str = None) -> Dict[str, Any]:
+    def create_episode_data(
+        self,
+        content: Union[str, Dict[str, Any]],
+        episode_type: EpisodeType = EpisodeType.text,
+        description: str = "通用信息",
+        name: str = None
+    ) -> Dict[str, Any]:
         """创建通用情节数据"""
         start_time = time.time()
         if name is None:
@@ -31,8 +33,12 @@ class KnowledgeGraphBuilder:
         print(f"create_episode_data 执行耗时: {execution_time:.4f} 秒")
         return result
 
-    def create_text_episode(self, text_content: str, description: str = "文本信息", 
-                           name: str = None) -> Dict[str, Any]:
+    def create_text_episode(
+        self,
+        text_content: str,
+        description: str = "文本信息",
+        name: str = None
+    ) -> Dict[str, Any]:
         """创建文本情节数据"""
         start_time = time.time()
         result = self.create_episode_data(
@@ -85,7 +91,6 @@ class KnowledgeGraphBuilder:
             self.logger.warning("没有提供情节数据")
             return
         self.logger.info(f"开始添加 {len(episodes)} 个情节...")
-        graphiti = self.graphiti_manager.get_graphiti()
         for i, episode in enumerate(episodes):
             episode_start_time = time.time()
             try:
@@ -102,14 +107,17 @@ class KnowledgeGraphBuilder:
                 else:
                     # 其他情况转换为JSON字符串
                     episode_body = json.dumps(content, ensure_ascii=False)
-                await graphiti.add_episode(
+                # 2. 改为直接调用新的 add_episode 函数
+                await add_episode(
                     name=name,
                     episode_body=episode_body,
                     source=episode_type,
                     source_description=description,
-                    reference_time=datetime.now(timezone.utc),
+                    # reference_time=datetime.now(timezone.utc),  # 如果需要可取消注释
                 )
-                self.logger.info(f'已添加情节: {name} ({episode_type.value})')
+                # 兼容 episode_type 可能是枚举或字符串
+                type_label = episode_type.value if hasattr(episode_type, "value") else episode_type
+                self.logger.info(f'已添加情节: {name} ({type_label})')
                 episode_end_time = time.time()
                 episode_execution_time = episode_end_time - episode_start_time
                 print(f"添加情节 {i+1} ({name}) 耗时: {episode_execution_time:.4f} 秒")
@@ -129,7 +137,6 @@ class KnowledgeGraphBuilder:
         start_time = time.time()
         if name is None:
             name = f"情节_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        graphiti = self.graphiti_manager.get_graphiti()
         try:
             # 处理内容格式
             if episode_type == EpisodeType.json and isinstance(content, dict):
@@ -138,7 +145,8 @@ class KnowledgeGraphBuilder:
                 episode_body = content
             else:
                 episode_body = json.dumps(content, ensure_ascii=False)
-            await graphiti.add_episode(
+            # 3. 改为直接调用新的 add_episode 函数
+            await add_episode(
                 name=name,
                 episode_body=episode_body,
                 source=episode_type,
