@@ -196,7 +196,7 @@ class KnowledgeGraphTestApplication:
                 # 如果JSON方式失败，使用文本方式
                 await self.graph_builder.add_single_episode(
                     content="智能客服系统是一个AI项目，状态为进行中，团队成员包括李九、张三、王五，使用Python、TensorFlow、React、Neo4j等技术。",
-                    episode_type=self.graph_builder.get_sample_episodes()[0]['type'],
+                    episode_type=EpisodeType.text,
                     description="项目详细信息",
                     name="智能客服系统项目文本版"
                 )
@@ -273,7 +273,7 @@ class KnowledgeGraphTestApplication:
             try:
                 await self.graph_builder.add_single_episode(
                     content="张三已晋升为高级软件工程师，经验增加到5年，掌握Java、Spring Boot、微服务架构等技能，薪资25000元，绩效评级优秀。",
-                    episode_type=self.graph_builder.get_sample_episodes()[0]['type'],
+                    episode_type=EpisodeType.text,
                     description="员工信息更新",
                     name="张三信息更新文本版"
                 )

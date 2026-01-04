@@ -15,6 +15,9 @@ dependencies = [
     "pydantic>=2.0.0",
     "tenacity>=8.0.0",
     "typing-extensions>=4.0.0",
+    # Web框架依赖
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
 ]
 
 [project.optional-dependencies]
@@ -29,6 +32,7 @@ dev = [
 # 脚本入口（可选）
 [project.scripts]
 graphiti-demo = "main:main"
+graphiti-api = "api.main:start_server"
 
 #[build-system]
 #requires = ["hatchling"]

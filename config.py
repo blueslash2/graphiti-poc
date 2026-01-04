@@ -13,15 +13,15 @@ load_dotenv()
 class Config:
     """应用程序配置类"""
     # Neo4j数据库配置
-    NEO4J_URI = os.environ.get('NEO4J_URI', 'bolt://localhost:7687')
+    NEO4J_URI = os.environ.get('NEO4J_URI', 'bolt://172.16.11.152:7687')
     NEO4J_USER = os.environ.get('NEO4J_USER', 'neo4j')
-    NEO4J_PASSWORD = os.environ.get('NEO4J_PASSWORD', '12345678')
+    NEO4J_PASSWORD = os.environ.get('NEO4J_PASSWORD', 'password')
     # LLM配置
-    OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', 'http://localhost:11434')
-    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', 'abc')
-    OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'qwen3:4b')
-    OPENAI_SMALL_MODEL = os.environ.get('OPENAI_SMALL_MODEL', 'qwen3:4b')
-    OPENAI_EMBEDDING_MODEL = os.environ.get('OPENAI_EMBEDDING_MODEL', 'quentinz/bge-large-zh-v1.5:latest')
+    OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', 'http://192.168.200.2/v1')
+    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', 'sk-RJ9cPqQnJ3fRUBgkuLoojfjhVTotPFqOo13IwCN3tD5Wxgh7')
+    OPENAI_MODEL = os.environ.get('OPENAI_MODEL', '衡云·明理')
+    OPENAI_SMALL_MODEL = os.environ.get('OPENAI_SMALL_MODEL', '衡云·明理')
+    OPENAI_EMBEDDING_MODEL = os.environ.get('OPENAI_EMBEDDING_MODEL', 'bge-m3')
     OPENAI_EMBEDDING_DIM = int(os.environ.get('OPENAI_EMBEDDING_DIM', '1024'))
     # 日志配置
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
