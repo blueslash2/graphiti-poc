@@ -8,3 +8,4 @@ venv/
 # uv
 .venv/
 .uv-cache/
+config.py

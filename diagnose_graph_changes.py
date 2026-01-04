@@ -33,7 +33,7 @@ class GraphChangeDiagnostic:
             self.neo4j_connector = Neo4jConnector()
             self.neo4j_connector.validate_connection()
             # 初始化Ollama和Graphiti管理器
-            self.graphiti_manager = OllamaGraphitiManager(self.neo4j_connector)
+            self.graphiti_manager = LLMGraphitiManager(self.neo4j_connector)
             await self.graphiti_manager.initialize_graphiti()
             await self.graphiti_manager.setup_database()
             # 初始化知识图谱构建器和搜索器

@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 from graphiti_core import Graphiti
 from graphiti_core.llm_client.config import LLMConfig
-from graphiti_core.llm_client.openai_client import OpenAIClient
+from graphiti_core.llm_client.openai_generic_client import OpenAIGenericClient
 from graphiti_core.embedder.openai import OpenAIEmbedder, OpenAIEmbedderConfig
 from graphiti_core.cross_encoder.openai_reranker_client import OpenAIRerankerClient
 from config import config
@@ -13,7 +13,7 @@ class LLMGraphitiManager:
     def __init__(self, neo4j_connector):
         self.neo4j_connector = neo4j_connector
         self.graphiti: Optional[Graphiti] = None
-        self.llm_client: Optional[OpenAIClient] = None
+        self.llm_client: Optional[OpenAIGenericClient] = None
         self.embedder: Optional[OpenAIEmbedder] = None
         self.cross_encoder: Optional[OpenAIRerankerClient] = None
         self.logger = logging.getLogger(__name__)
@@ -28,9 +28,9 @@ class LLMGraphitiManager:
             api_key=llm_config['api_key'],
             model=llm_config['model'],
             small_model=llm_config['small_model'],
-            base_url=f"{llm_config['base_url']}/v1",
+            base_url=llm_config['base_url'],
         )
-        self.llm_client = OpenAIClient(config=llm_config)
+        self.llm_client = OpenAIGenericClient(config=llm_config)
         self.logger.info("LLM客户端配置完成")
         return llm_config
 
@@ -44,7 +44,7 @@ class LLMGraphitiManager:
                 api_key=llm_config['api_key'],
                 embedding_model=llm_config['embedding_model'],
                 embedding_dim=llm_config['embedding_dim'], # bge-large-zh-v1.5是1024维
-                base_url=f"{llm_config['base_url']}/v1",
+                base_url=llm_config['base_url'],
             )
         )
         self.logger.info("Embedder配置完成")
