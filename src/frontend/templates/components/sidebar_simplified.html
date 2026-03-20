@@ -1,0 +1,308 @@
+<!-- 简化的侧边栏导航 -->
+<div class="h-full flex flex-col" id="sidebar-content">
+    
+    <!-- 主导航菜单（占满可用空间） -->
+    <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        
+        <!-- 首页面板 -->
+        <a href="/" 
+           class="nav-item {% if active_page == 'dashboard' %}active{% endif %}"
+           data-nav-link="dashboard"
+           title="首页面板">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.dashboard">首页面板</span>
+            <!-- 原文：首页面板 -->
+        </a>
+        
+        <!-- 新增知识 -->
+        <a href="/add-knowledge" 
+           class="nav-item {% if active_page == 'add-knowledge' %}active{% endif %}"
+           data-nav-link="add-knowledge"
+           title="新增知识">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.add_knowledge">新增知识</span>
+            <!-- 原文：新增知识 -->
+        </a>
+        
+        <!-- 知识查询 -->
+        <a href="/search" 
+           class="nav-item {% if active_page == 'search' %}active{% endif %}"
+           data-nav-link="search"
+           title="知识查询">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.search">知识查询</span>
+            <!-- 原文：知识查询 -->
+        </a>
+        
+        <!-- 分隔线 -->
+        <div class="my-4 border-t border-border sidebar-text"></div>
+        
+        <!-- 系统设置 -->
+        <a href="/settings" 
+           class="nav-item {% if active_page == 'settings' %}active{% endif %}"
+           data-nav-link="settings"
+           title="系统设置">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.settings">系统设置</span>
+            <!-- 原文：系统设置 -->
+        </a>
+        
+        <!-- 帮助文档 -->
+        <a href="/help" 
+           class="nav-item {% if active_page == 'help' %}active{% endif %}"
+           data-nav-link="help"
+           title="帮助文档">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.help">帮助</span>
+            <!-- 原文：帮助 -->
+        </a>
+    </nav>
+    
+</div>
+
+<!-- 简化侧边栏样式和脚本 -->
+<style>
+/* 侧边栏基础样式 */
+#sidebar {
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+/* 展开状态 */
+#sidebar.expanded {
+    width: 256px; /* 64 * 4rem */
+}
+
+/* 收起状态 */
+#sidebar.collapsed {
+    width: 64px;  /* 16 * 4rem */
+}
+
+/* 收起状态时隐藏文字内容 */
+#sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+/* 收起状态时导航项调整 */
+#sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* 收起状态时底部按钮调整 */
+#sidebar.collapsed .sidebar-toggle {
+    transform: rotate(180deg);
+}
+
+/* 导航项样式 */
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item:hover {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    transform: translateX(2px);
+}
+
+.nav-item.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: var(--color-primary);
+}
+
+.nav-item-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* 收起状态时的工具提示 */
+#sidebar.collapsed .nav-item[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--color-surface-elevated);
+    color: var(--color-text);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+/* 响应式调整 */
+@media (max-width: 767px) {
+    #sidebar {
+        width: 256px !important;
+    }
+    
+    #sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
+    #sidebar.expanded {
+        transform: translateX(0);
+    }
+}
+
+/* 暗色主题支持 */
+[data-theme="dark"] #sidebar {
+    background-color: var(--color-surface-dark);
+}
+
+/* 滚动条样式 */
+#sidebar ::-webkit-scrollbar {
+    width: 4px;
+}
+
+#sidebar ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#sidebar ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 2px;
+}
+</style>
+
+<script>
+// 侧边栏状态管理（保持与之前相同的功能）
+let sidebarState = {
+    isExpanded: true,
+    isCollapsedByUser: false
+};
+
+// 初始化侧边栏
+function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const savedState = localStorage.getItem('sidebar-expanded');
+    
+    // 恢复保存的状态
+    if (savedState !== null) {
+        sidebarState.isExpanded = savedState === 'true';
+    } else {
+        // 默认展开，但根据屏幕大小调整
+        sidebarState.isExpanded = window.innerWidth >= 768;
+    }
+    
+    updateSidebarState();
+    
+    // 监听窗口大小变化
+    window.addEventListener('resize', handleResize);
+}
+
+// 切换侧边栏展开/收起
+function toggleSidebar() {
+    sidebarState.isExpanded = !sidebarState.isExpanded;
+    sidebarState.isCollapsedByUser = true;
+    updateSidebarState();
+    localStorage.setItem('sidebar-expanded', sidebarState.isExpanded);
+}
+
+// 更新侧边栏状态
+function updateSidebarState() {
+    const sidebar = document.getElementById('sidebar');
+    const content = document.querySelector('.layout-content');
+    
+    if (!sidebar || !content) {
+        console.error('侧边栏或内容区域元素未找到');
+        return;
+    }
+    
+    if (sidebarState.isExpanded) {
+        sidebar.classList.remove('collapsed');
+        sidebar.classList.add('expanded');
+        sidebar.style.width = '256px';
+        sidebar.style.transform = 'translateX(0)';
+        content.style.marginLeft = '256px';
+    } else {
+        sidebar.classList.remove('expanded');
+        sidebar.classList.add('collapsed');
+        if (window.innerWidth >= 768) {
+            // 桌面端收起时缩小宽度
+            sidebar.style.width = '64px';
+            content.style.marginLeft = '64px';
+        } else {
+            // 移动端收起时完全隐藏
+            sidebar.style.transform = 'translateX(-100%)';
+            content.style.marginLeft = '0';
+        }
+    }
+}
+
+// 处理窗口大小变化
+function handleResize() {
+    if (window.innerWidth < 768) {
+        // 移动端强制展开状态
+        sidebarState.isExpanded = true;
+        updateSidebarState();
+    } else if (!sidebarState.isCollapsedByUser) {
+        // 桌面端且用户未手动收起，保持展开
+        sidebarState.isExpanded = true;
+        updateSidebarState();
+    }
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    initSidebar();
+});
+
+// 导航链接点击处理（保持原有功能）
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('[data-nav-link]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // 更新活动状态
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 移动端自动关闭侧边栏
+            if (window.innerWidth < 768) {
+                window.app.toggleSidebar();
+            }
+        });
+    });
+});
+</script>

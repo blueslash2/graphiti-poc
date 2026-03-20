@@ -1,0 +1,229 @@
+<!-- 底部信息 -->
+<footer class="bg-surface border-t border-border mt-auto">
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            
+            <!-- 左侧：版权信息 -->
+            <div class="text-sm text-text-secondary text-center md:text-left">
+                <p data-i18n="footer.copyright" data-i18n-params='{"company_name": "{{ company_name | default('企业名称') }}"}'>
+                    © 2024 {{ company_name | default('企业名称') }}. 保留所有权利。
+                </p>
+                <!-- 原文：© 2024 企业名称. 保留所有权利。 -->
+            </div>
+            
+            <!-- 中间：版本和构建信息 -->
+            <div class="text-xs text-text-secondary text-center">
+                <div class="space-y-1">
+                    <div data-i18n="footer.version" data-i18n-params='{"version": "{{ version | default('1.0.0') }}"}'>
+                        版本 {{ version | default('1.0.0') }}
+                    </div>
+                    <!-- 原文：版本 1.0.0 -->
+                    <div data-i18n="footer.build_time" data-i18n-params='{"build_time": "{{ build_time | default('2024-01-01') }}"}'>
+                        构建时间: {{ build_time | default('2024-01-01') }}
+                    </div>
+                    <!-- 原文：构建时间: 2024-01-01 -->
+                </div>
+            </div>
+            
+            <!-- 右侧：链接 -->
+            <div class="flex items-center space-x-6 text-sm">
+                <a href="/privacy" 
+                   class="text-text-secondary hover:text-primary transition-colors"
+                   data-i18n="footer.links.privacy">
+                    隐私政策
+                </a>
+                <!-- 原文：隐私政策 -->
+                
+                <a href="/terms" 
+                   class="text-text-secondary hover:text-primary transition-colors"
+                   data-i18n="footer.links.terms">
+                    使用条款
+                </a>
+                <!-- 原文：使用条款 -->
+                
+                <a href="/support" 
+                   class="text-text-secondary hover:text-primary transition-colors"
+                   data-i18n="footer.links.support">
+                    技术支持
+                </a>
+                <!-- 原文：技术支持 -->
+                
+                <a href="/docs" 
+                   class="text-text-secondary hover:text-primary transition-colors"
+                   data-i18n="footer.links.documentation"
+                   target="_blank">
+                    文档中心
+                </a>
+                <!-- 原文：文档中心 -->
+            </div>
+        </div>
+        
+        <!-- 技术信息（可选显示） -->
+        <div class="mt-4 pt-4 border-t border-border text-xs text-text-secondary">
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <span>Powered by Graphiti</span>
+                    <span class="hidden sm:inline">•</span>
+                    <span>FastAPI + Jinja2 + Tailwind CSS</span>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- 系统状态指示器 -->
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-success" title="系统运行正常"></div>
+                        <span>系统正常</span>
+                    </div>
+                    
+                    <!-- 性能指标（可选） -->
+                    <div class="hidden md:flex items-center space-x-2" id="performance-metrics">
+                        <span>加载时间: <span id="load-time">--</span>ms</span>
+                        <span>•</span>
+                        <span>内存使用: <span id="memory-usage">--</span>MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 底部样式和脚本 -->
+<style>
+/* 底部样式优化 */
+footer {
+    margin-top: auto; /* 确保footer在页面底部 */
+}
+
+/* 响应式调整 */
+@media (max-width: 767px) {
+    footer .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    footer .flex-col {
+        text-align: center;
+    }
+    
+    footer .space-x-6 {
+        justify-content: center;
+    }
+}
+
+/* 链接悬停效果 */
+footer a {
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+footer a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.2s ease;
+}
+
+footer a:hover::after {
+    width: 100%;
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] footer {
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 1));
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 性能指标收集
+    function collectPerformanceMetrics() {
+        // 页面加载时间
+        if (window.performance && window.performance.timing) {
+            const timing = window.performance.timing;
+            const loadTime = timing.loadEventEnd - timing.navigationStart;
+            
+            const loadTimeElement = document.getElementById('load-time');
+            if (loadTimeElement && loadTime > 0) {
+                loadTimeElement.textContent = loadTime;
+            }
+        }
+        
+        // 内存使用（如果可用）
+        if (window.performance && window.performance.memory) {
+            const memory = window.performance.memory;
+            const usedMemory = Math.round(memory.usedJSHeapSize / 1048576); // 转换为MB
+            
+            const memoryElement = document.getElementById('memory-usage');
+            if (memoryElement) {
+                memoryElement.textContent = usedMemory;
+            }
+        }
+    }
+    
+    // 延迟收集性能指标，确保页面完全加载
+    setTimeout(collectPerformanceMetrics, 1000);
+    
+    // 定期更新性能指标
+    setInterval(collectPerformanceMetrics, 30000);
+    
+    // 添加页面可见性变化监听
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            // 页面重新可见时更新指标
+            collectPerformanceMetrics();
+        }
+    });
+    
+    // 错误率统计（可选）
+    let errorCount = 0;
+    window.addEventListener('error', function() {
+        errorCount++;
+        // 可以在这里添加错误上报逻辑
+    });
+    
+    // 用户行为统计（可选）
+    let clickCount = 0;
+    document.addEventListener('click', function() {
+        clickCount++;
+        // 可以在这里添加用户行为分析逻辑
+    });
+});
+
+// 导出全局函数供其他模块使用
+window.footerUtils = {
+    updatePerformanceMetrics: function(metrics) {
+        const loadTimeElement = document.getElementById('load-time');
+        const memoryElement = document.getElementById('memory-usage');
+        
+        if (loadTimeElement && metrics.loadTime) {
+            loadTimeElement.textContent = metrics.loadTime;
+        }
+        
+        if (memoryElement && metrics.memoryUsage) {
+            memoryElement.textContent = metrics.memoryUsage;
+        }
+    },
+    
+    showSystemStatus: function(status) {
+        const statusIndicator = document.querySelector('#performance-metrics').previousElementSibling;
+        if (statusIndicator) {
+            const indicator = statusIndicator.querySelector('div');
+            const text = statusIndicator.querySelector('span');
+            
+            if (status === 'normal') {
+                indicator.className = 'w-2 h-2 rounded-full bg-success';
+                text.textContent = '系统正常';
+            } else if (status === 'warning') {
+                indicator.className = 'w-2 h-2 rounded-full bg-warning';
+                text.textContent = '系统警告';
+            } else if (status === 'error') {
+                indicator.className = 'w-2 h-2 rounded-full bg-error';
+                text.textContent = '系统异常';
+            }
+        }
+    }
+};
+</script>

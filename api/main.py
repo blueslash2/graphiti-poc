@@ -4,6 +4,7 @@ FastAPI主应用
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 import logging
 import uvicorn
 from typing import Dict, Any
@@ -34,6 +35,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 配置静态文件服务
+app.mount("/static", StaticFiles(directory="src/frontend/static"), name="static")
 
 @app.on_event("startup")
 async def startup_event():
@@ -64,6 +67,14 @@ async def shutdown_event():
 
 # 注册路由
 app.include_router(episodes.router)
+
+# 注册前端路由
+try:
+    from api.frontend import router as frontend_router
+    app.include_router(frontend_router)
+    logger.info("前端路由注册成功")
+except ImportError as e:
+    logger.warning(f"前端路由模块导入失败: {e}")
 
 
 @app.get("/")

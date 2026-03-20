@@ -1,0 +1,519 @@
+<!-- 增强版侧边栏导航 -->
+<div class="h-full flex flex-col" id="sidebar-content">
+    
+    <!-- 顶部：Logo和展开/收起按钮 -->
+    <div class="p-4 border-b border-border flex items-center justify-between">
+        <!-- Logo区域（展开时显示） -->
+        <div class="sidebar-logo flex items-center space-x-3">
+            <!-- 企业Logo -->
+            <img src="/static/images/logo-company.png"
+                 alt="{{ company_name | default('企业Logo') }}"
+                 class="h-8 w-auto"
+                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzMzOTlmZiIvPgo8dGV4dCB4PSIxNiIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkxPR088L3RleHQ+Cjwvc3ZnPgo='">
+            
+            <!-- 项目信息（仅在展开时显示） -->
+            <div class="sidebar-text">
+                <h1 class="text-lg font-semibold text-text" data-i18n="header.project_logo_alt">Graphiti 知识图谱</h1>
+                <p class="text-xs text-text-secondary" data-i18n="dashboard.subtitle">智能化知识管理</p>
+            </div>
+        </div>
+        
+        <!-- 展开/收起按钮 -->
+        <button type="button" 
+                class="sidebar-toggle p-2 rounded-md text-text-secondary hover:text-text hover:bg-surface transition-colors"
+                onclick="toggleSidebar()"
+                title="切换侧边栏">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- 用户信息区域（展开时显示） -->
+    <div class="p-4 border-b border-border sidebar-text">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-text truncate">当前用户</p>
+                <p class="text-xs text-text-secondary truncate">user@company.com</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主导航菜单 -->
+    <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        
+        <!-- 首页面板 -->
+        <a href="/" 
+           class="nav-item {% if active_page == 'dashboard' %}active{% endif %}"
+           data-nav-link="dashboard"
+           title="首页面板">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.dashboard">首页面板</span>
+            <!-- 原文：首页面板 -->
+        </a>
+        
+        <!-- 新增知识 -->
+        <a href="/add-knowledge" 
+           class="nav-item {% if active_page == 'add-knowledge' %}active{% endif %}"
+           data-nav-link="add-knowledge"
+           title="新增知识">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.add_knowledge">新增知识</span>
+            <!-- 原文：新增知识 -->
+        </a>
+        
+        <!-- 知识查询 -->
+        <a href="/search"
+           class="nav-item {% if active_page == 'search' %}active{% endif %}"
+           data-nav-link="search"
+           title="知识查询">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.search">知识查询</span>
+            <!-- 原文：知识查询 -->
+        </a>
+        
+        <!-- 分隔线 -->
+        <div class="my-4 border-t border-border sidebar-text"></div>
+        
+        <!-- 系统设置 -->
+        <a href="/settings" 
+           class="nav-item {% if active_page == 'settings' %}active{% endif %}"
+           data-nav-link="settings"
+           title="系统设置">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.settings">系统设置</span>
+            <!-- 原文：系统设置 -->
+        </a>
+        
+        <!-- 帮助文档 -->
+        <a href="/help" 
+           class="nav-item {% if active_page == 'help' %}active{% endif %}"
+           data-nav-link="help"
+           title="帮助文档">
+            <svg class="nav-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="sidebar-text" data-i18n="navigation.help">帮助</span>
+            <!-- 原文：帮助 -->
+        </a>
+    </nav>
+    
+    <!-- 底部功能区（主题切换、语言切换、用户菜单） -->
+    <div class="p-4 border-t border-border bg-surface/50">
+        <div class="space-y-3">
+            <!-- 主题切换 -->
+            <div class="relative group">
+                <button type="button" 
+                        class="w-full flex items-center space-x-3 p-2 rounded-md text-text-secondary hover:text-text hover:bg-surface transition-colors"
+                        data-theme-toggle
+                        title="切换主题">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <span class="sidebar-text text-sm">主题</span>
+                </button>
+                
+                <!-- 主题选择下拉菜单 -->
+                <div class="absolute left-full top-0 ml-2 w-48 bg-surface-elevated rounded-lg 
+                           shadow-lg border border-border hidden group-hover:block">
+                    <div class="p-2">
+                        <button type="button" 
+                                class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface 
+                                       transition-colors"
+                                onclick="window.themeManager.setTheme('light')">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                亮色主题
+                            </span>
+                        </button>
+                        <button type="button" 
+                                class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface 
+                                       transition-colors"
+                                onclick="window.themeManager.setTheme('dark')">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                </svg>
+                                暗色主题
+                            </span>
+                        </button>
+                        <button type="button" 
+                                class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface 
+                                       transition-colors"
+                                onclick="window.themeManager.setTheme('auto')">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                                跟随系统
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 语言切换 -->
+            <div class="relative group">
+                <button type="button" 
+                        class="w-full flex items-center space-x-3 p-2 rounded-md text-text-secondary hover:text-text hover:bg-surface transition-colors"
+                        title="切换语言">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.769 7.459 11 10.188 11 13a8.001 8.001 0 018 8h-8V5z"></path>
+                    </svg>
+                    <span class="sidebar-text text-sm">语言</span>
+                </button>
+                
+                <!-- 语言选择下拉菜单 -->
+                <div class="absolute left-full top-0 ml-2 w-32 bg-surface-elevated rounded-lg 
+                           shadow-lg border border-border hidden group-hover:block">
+                    <div class="p-2">
+                        <button type="button" 
+                                class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface 
+                                       transition-colors"
+                                onclick="window.i18n.setLanguage('zh-CN')">
+                            简体中文
+                        </button>
+                        <button type="button" 
+                                class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface 
+                                       transition-colors"
+                                onclick="window.i18n.setLanguage('en-US')">
+                            English
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 用户菜单 -->
+            <div class="relative group">
+                <button type="button" 
+                        class="w-full flex items-center space-x-3 p-2 rounded-md text-text-secondary hover:text-text hover:bg-surface transition-colors"
+                        title="用户菜单">
+                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <span class="sidebar-text text-sm">用户</span>
+                </button>
+                
+                <!-- 用户菜单下拉 -->
+                <div class="absolute left-full top-0 ml-2 w-48 bg-surface-elevated rounded-lg 
+                           shadow-lg border border-border hidden group-hover:block">
+                    <div class="p-2">
+                        <div class="px-3 py-2 text-sm text-text-secondary border-b border-border">
+                            <div class="font-medium">当前用户</div>
+                            <div class="text-xs">user@company.com</div>
+                        </div>
+                        <a href="#" class="block px-3 py-2 text-sm rounded-md hover:bg-surface transition-colors">
+                            个人设置
+                        </a>
+                        <a href="#" class="block px-3 py-2 text-sm rounded-md hover:bg-surface transition-colors">
+                            系统设置
+                        </a>
+                        <hr class="my-1 border-border">
+                        <a href="#" class="block px-3 py-2 text-sm rounded-md hover:bg-surface transition-colors text-error">
+                            退出登录
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 系统状态 -->
+            <div class="flex items-center justify-between text-xs sidebar-text">
+                <span class="text-text-secondary">系统状态</span>
+                <div class="flex items-center space-x-1">
+                    <div id="sidebar-health-indicator" 
+                         class="w-2 h-2 rounded-full bg-success"
+                         title="系统正常">
+                    </div>
+                    <span class="text-success">正常</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 增强版侧边栏样式和脚本 -->
+<style>
+/* 侧边栏基础样式 */
+#sidebar {
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+/* 展开状态 */
+#sidebar.expanded {
+    width: 256px; /* 64 * 4rem */
+}
+
+/* 收起状态 */
+#sidebar.collapsed {
+    width: 64px;  /* 16 * 4rem */
+}
+
+/* 收起状态时隐藏文字内容 */
+#sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+/* 收起状态时Logo区域调整 */
+#sidebar.collapsed .sidebar-logo {
+    justify-content: center;
+}
+
+#sidebar.collapsed .sidebar-logo img {
+    width: 32px;
+    height: 32px;
+}
+
+/* 收起状态时导航项调整 */
+#sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* 收起状态时底部按钮调整 */
+#sidebar.collapsed .sidebar-toggle {
+    transform: rotate(180deg);
+}
+
+/* 收起状态时底部功能区图标居中 */
+#sidebar.collapsed .sidebar-bottom-buttons button {
+    justify-content: center;
+}
+
+/* 导航项样式 */
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item:hover {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    transform: translateX(2px);
+}
+
+.nav-item.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: var(--color-primary);
+}
+
+.nav-item-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* 收起状态时的工具提示 */
+#sidebar.collapsed .nav-item[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--color-surface-elevated);
+    color: var(--color-text);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+/* 底部按钮样式 */
+.sidebar-bottom-buttons button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+}
+
+/* 下拉菜单位置调整 */
+.sidebar-bottom-buttons .group:hover .hidden {
+    display: block;
+    animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 响应式调整 */
+@media (max-width: 767px) {
+    #sidebar {
+        width: 256px !important;
+    }
+    
+    #sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
+    #sidebar.expanded {
+        transform: translateX(0);
+    }
+}
+
+/* 暗色主题支持 */
+[data-theme="dark"] #sidebar {
+    background-color: var(--color-surface-dark);
+}
+
+/* 滚动条样式 */
+#sidebar ::-webkit-scrollbar {
+    width: 4px;
+}
+
+#sidebar ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#sidebar ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 2px;
+}
+</style>
+
+<script>
+// 侧边栏状态管理
+let sidebarState = {
+    isExpanded: true,
+    isCollapsedByUser: false
+};
+
+// 初始化侧边栏
+function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const savedState = localStorage.getItem('sidebar-expanded');
+    
+    // 恢复保存的状态
+    if (savedState !== null) {
+        sidebarState.isExpanded = savedState === 'true';
+    } else {
+        // 默认展开，但根据屏幕大小调整
+        sidebarState.isExpanded = window.innerWidth >= 768;
+    }
+    
+    updateSidebarState();
+    
+    // 监听窗口大小变化
+    window.addEventListener('resize', handleResize);
+}
+
+// 切换侧边栏展开/收起
+function toggleSidebar() {
+    sidebarState.isExpanded = !sidebarState.isExpanded;
+    sidebarState.isCollapsedByUser = true;
+    updateSidebarState();
+    localStorage.setItem('sidebar-expanded', sidebarState.isExpanded);
+}
+
+// 更新侧边栏状态
+function updateSidebarState() {
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('main-content');
+    
+    if (sidebarState.isExpanded) {
+        sidebar.classList.remove('collapsed');
+        sidebar.classList.add('expanded');
+        content.style.marginLeft = '256px';
+    } else {
+        sidebar.classList.remove('expanded');
+        sidebar.classList.add('collapsed');
+        content.style.marginLeft = '64px';
+    }
+}
+
+// 处理窗口大小变化
+function handleResize() {
+    if (window.innerWidth < 768) {
+        // 移动端强制展开状态
+        sidebarState.isExpanded = true;
+        updateSidebarState();
+    } else if (!sidebarState.isCollapsedByUser) {
+        // 桌面端且用户未手动收起，保持展开
+        sidebarState.isExpanded = true;
+        updateSidebarState();
+    }
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    initSidebar();
+});
+
+// 导航链接点击处理（保持原有功能）
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('[data-nav-link]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // 更新活动状态
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 移动端自动关闭侧边栏
+            if (window.innerWidth < 768) {
+                window.app.toggleSidebar();
+            }
+        });
+    });
+});
+</script>

@@ -1,0 +1,630 @@
+{% extends "base.html" %}
+
+{% block title %}新增知识 - {{ page_title | default('A股年报Narrative-KG测试系统') }}{% endblock %}
+
+{% block content %}
+<!-- 新增知识页面内容 -->
+<div class="space-y-6">
+    
+    <!-- 知识添加表单 -->
+    <div class="card animate-slide-up">
+        <div class="card-header">
+            <h2 class="text-lg font-semibold text-text" data-i18n="add_knowledge.input_method">
+                输入方式
+            </h2>
+            <!-- 原文：输入方式 -->
+        </div>
+        <div class="card-body">
+            <form id="add-knowledge-form" class="space-y-6">
+                
+                <!-- 输入方式选择 -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="input-method" id="input-method-text" value="text" 
+                                   class="w-4 h-4 text-primary border-border focus:ring-primary" checked>
+                            <span class="text-sm font-medium text-text" data-i18n="add_knowledge.text_input">
+                                文本输入
+                            </span>
+                            <!-- 原文：文本输入 -->
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="input-method" id="input-method-file" value="file" 
+                                   class="w-4 h-4 text-primary border-border focus:ring-primary">
+                            <span class="text-sm font-medium text-text" data-i18n="add_knowledge.file_upload">
+                                文件上传
+                            </span>
+                            <!-- 原文：文件上传 -->
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 文本输入区域 -->
+                <div id="text-input-section" class="space-y-4">
+                    <div>
+                        <label for="text-content" class="block text-sm font-medium text-text mb-2" data-i18n="add_knowledge.text_content">
+                            文本内容
+                        </label>
+                        <!-- 原文：文本内容 -->
+                        <textarea id="text-content" name="content" rows="8" 
+                                  class="textarea w-full" 
+                                  placeholder="{{ '请输入要添加到知识图谱的文本内容，支持长文本输入...' }}"
+                                  data-i18n-placeholder="add_knowledge.text_placeholder">
+                        </textarea>
+                        <!-- 原文：请输入要添加到知识图谱的文本内容，支持长文本输入... -->
+                    </div>
+                    
+                    <div>
+                        <label for="text-description" class="block text-sm font-medium text-text mb-2" data-i18n="add_knowledge.text_description">
+                            描述信息（可选）
+                        </label>
+                        <!-- 原文：描述信息（可选） -->
+                        <input type="text" id="text-description" name="description" 
+                               class="input w-full" 
+                               placeholder="{{ '为这段知识内容添加简要描述' }}"
+                               data-i18n-placeholder="add_knowledge.text_description_placeholder">
+                        <!-- 原文：为这段知识内容添加简要描述 -->
+                    </div>
+                </div>
+                
+                <!-- 文件上传区域 -->
+                <div id="file-upload-section" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2" data-i18n="add_knowledge.file_select">
+                            选择文件
+                        </label>
+                        <!-- 原文：选择文件 -->
+                        <div id="file-drop-zone" class="file-upload-zone">
+                            <input type="file" id="file-input" name="file" accept=".txt,.md,.csv" class="hidden">
+                            <div class="text-center">
+                                <svg class="w-12 h-12 text-text-secondary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                <p class="text-sm text-text-secondary mb-2" data-i18n="add_knowledge.file_drag_drop">
+                                    或将文件拖拽到此处
+                                </p>
+                                <!-- 原文：或将文件拖拽到此处 -->
+                                <p class="text-xs text-text-secondary" data-i18n="add_knowledge.file_types">
+                                    支持格式: .txt, .md, .csv
+                                </p>
+                                <!-- 原文：支持格式: .txt, .md, .csv -->
+                                <p class="text-xs text-text-secondary" data-i18n="add_knowledge.max_file_size">
+                                    最大文件大小: 10MB
+                                </p>
+                                <!-- 原文：最大文件大小: 10MB -->
+                            </div>
+                        </div>
+                        <div id="selected-file-info" class="mt-2 hidden">
+                            <p class="text-sm text-text">
+                                <span data-i18n="add_knowledge.file_read_success">文件读取成功</span>: 
+                                <span id="selected-file-name"></span>
+                            </p>
+                            <!-- 原文：文件读取成功 -->
+                        </div>
+                        <input type="hidden" id="file-content" name="file-content">
+                    </div>
+                </div>
+                
+                <!-- 参考时间设置 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="reference-time" class="block text-sm font-medium text-text mb-2" data-i18n="add_knowledge.reference_time">
+                            参考时间
+                        </label>
+                        <!-- 原文：参考时间 -->
+                        <input type="text" id="reference-time" name="reference_time" 
+                               class="input w-full" 
+                               placeholder="{{ '格式: yyyyMMdd 或 yyyyMM' }}"
+                               data-i18n-placeholder="add_knowledge.reference_time_placeholder">
+                        <!-- 原文：格式: yyyyMMdd 或 yyyyMM -->
+                        <p class="text-xs text-text-secondary mt-1" data-i18n="add_knowledge.reference_time_help">
+                            指定知识内容的时间参考点，不填写则使用当前时间
+                        </p>
+                        <!-- 原文：指定知识内容的时间参考点，不填写则使用当前时间 -->
+                    </div>
+                    
+                    <div>
+                        <label for="episode-name" class="block text-sm font-medium text-text mb-2">
+                            知识名称（可选）
+                        </label>
+                        <input type="text" id="episode-name" name="name" 
+                               class="input w-full" 
+                               placeholder="{{ '自动生成名称（可选）' }}">
+                    </div>
+                </div>
+                
+                <!-- 隐藏字段 -->
+                <input type="hidden" id="input-method" name="input-method" value="text">
+                
+                <!-- 提交按钮 -->
+                <div class="flex items-center justify-end space-x-4 pt-4">
+                    <button type="button" 
+                            class="btn btn-secondary"
+                            onclick="resetForm()"
+                            data-i18n="common.reset">
+                        重置
+                    </button>
+                    <!-- 原文：重置 -->
+                    <button type="submit" 
+                            class="btn btn-primary"
+                            data-i18n="add_knowledge.submit_button">
+                        提交到知识图谱
+                    </button>
+                    <!-- 原文：提交到知识图谱 -->
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 提交结果显示区域 -->
+    <div id="submit-result" class="hidden">
+        <div class="card border-l-4" id="result-card">
+            <div class="card-body">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div id="result-icon"></div>
+                        <div>
+                            <h4 class="font-medium text-text" id="result-title"></h4>
+                            <p class="text-sm text-text-secondary" id="result-message"></p>
+                        </div>
+                    </div>
+                    <button type="button"
+                            class="btn btn-ghost btn-sm"
+                            onclick="closeResult()"
+                            data-i18n="add_knowledge.result_close">
+                        关闭结果
+                    </button>
+                </div>
+                <div id="result-details" class="mt-4 pt-4 border-t border-border hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="font-medium" data-i18n="add_knowledge.episode_name">情节名称</span>:
+                            <span id="result-episode-name" class="ml-2"></span>
+                        </div>
+                        <div>
+                            <span class="font-medium" data-i18n="add_knowledge.episode_description">描述信息</span>:
+                            <span id="result-episode-description" class="ml-2"></span>
+                        </div>
+                        <div class="md:col-span-2">
+                            <span class="font-medium" data-i18n="add_knowledge.content_preview">内容预览</span>:
+                            <div id="result-content-preview" class="mt-1 p-2 bg-bg-secondary rounded text-xs"></div>
+                        </div>
+                        <div>
+                            <span class="font-medium" data-i18n="add_knowledge.reference_time">参考时间</span>:
+                            <span id="result-reference-time" class="ml-2"></span>
+                        </div>
+                        <div>
+                            <span class="font-medium" data-i18n="add_knowledge.episode_type">情节类型</span>:
+                            <span id="result-episode-type" class="ml-2"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 处理状态提示 -->
+    <div id="processing-status" class="hidden">
+        <div class="card border-l-4 border-primary">
+            <div class="card-body">
+                <div class="flex items-center space-x-3">
+                    <div class="spinner text-primary"></div>
+                    <div>
+                        <h4 class="font-medium text-text" data-i18n="add_knowledge.submitting">
+                            正在提交...
+                        </h4>
+                        <!-- 原文：正在提交... -->
+                        <p class="text-sm text-text-secondary" id="processing-message">
+                            正在处理您的知识内容，请稍候...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 新增知识页面特定脚本
+
+/**
+ * 初始化页面
+ */
+function initAddKnowledgePage() {
+    console.log('初始化新增知识页面');
+    
+    // 绑定输入方式切换
+    bindInputMethodToggle();
+    
+    // 绑定文件上传
+    bindFileUpload();
+    
+    // 注意：表单提交由app.js统一处理，这里不再绑定以避免冲突
+    // 绑定参考时间输入验证
+    bindReferenceTimeValidation();
+}
+
+/**
+ * 绑定输入方式切换
+ */
+function bindInputMethodToggle() {
+    const textRadio = document.getElementById('input-method-text');
+    const fileRadio = document.getElementById('input-method-file');
+    const textSection = document.getElementById('text-input-section');
+    const fileSection = document.getElementById('file-upload-section');
+    const hiddenInputMethod = document.getElementById('input-method');
+    
+    function updateInputMethod() {
+        if (textRadio.checked) {
+            textSection.classList.remove('hidden');
+            fileSection.classList.add('hidden');
+            hiddenInputMethod.value = 'text';
+            // 清空文件内容
+            document.getElementById('file-content').value = '';
+            document.getElementById('file-input').value = '';
+            document.getElementById('selected-file-info').classList.add('hidden');
+        } else {
+            textSection.classList.add('hidden');
+            fileSection.classList.remove('hidden');
+            hiddenInputMethod.value = 'file';
+            // 清空文本内容
+            document.getElementById('text-content').value = '';
+        }
+    }
+    
+    textRadio.addEventListener('change', updateInputMethod);
+    fileRadio.addEventListener('change', updateInputMethod);
+}
+
+/**
+ * 绑定文件上传
+ */
+function bindFileUpload() {
+    const fileInput = document.getElementById('file-input');
+    const fileDropZone = document.getElementById('file-drop-zone');
+    const selectedFileInfo = document.getElementById('selected-file-info');
+    const selectedFileName = document.getElementById('selected-file-name');
+    const fileContentField = document.getElementById('file-content');
+    
+    // 点击选择文件
+    fileDropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // 文件选择处理
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleFileUpload(file);
+        }
+    });
+    
+    // 拖拽上传
+    fileDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        fileDropZone.classList.add('drag-over');
+    });
+    
+    fileDropZone.addEventListener('dragleave', () => {
+        fileDropZone.classList.remove('drag-over');
+    });
+    
+    fileDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileDropZone.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            fileInput.files = files; // 设置文件输入的值
+            handleFileUpload(file);
+        }
+    });
+    
+    /**
+     * 处理文件上传
+     */
+    function handleFileUpload(file) {
+        // 验证文件
+        if (!validateFile(file)) {
+            return;
+        }
+        
+        showLoading();
+        
+        // 读取文件内容
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const content = e.target.result;
+            
+            // 将文件内容填入隐藏字段
+            fileContentField.value = content;
+            
+            // 显示文件名
+            selectedFileName.textContent = file.name;
+            selectedFileInfo.classList.remove('hidden');
+            
+            hideLoading();
+            showSuccess(window.t('add_knowledge.file_read_success'));
+        };
+        
+        reader.onerror = function() {
+            hideLoading();
+            showError(window.t('add_knowledge.file_read_error'));
+        };
+        
+        reader.readAsText(file);
+    }
+}
+
+/**
+ * 验证文件
+ */
+function validateFile(file) {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = ['text/plain', 'text/markdown', 'text/csv'];
+    const allowedExtensions = ['.txt', '.md', '.csv'];
+    
+    // 检查文件大小
+    if (file.size > maxSize) {
+        showError(window.t('add_knowledge.validation.file_too_large'));
+        return false;
+    }
+    
+    // 检查文件类型
+    if (!allowedTypes.includes(file.type)) {
+        // 检查文件扩展名作为备选
+        const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+        if (!allowedExtensions.includes(fileExtension)) {
+            showError(window.t('add_knowledge.validation.file_type_invalid'));
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+/**
+ * 绑定表单提交
+ */
+function bindFormSubmission() {
+    const form = document.getElementById('add-knowledge-form');
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await submitKnowledgeForm(form);
+    });
+}
+
+/**
+ * 提交知识表单
+ */
+async function submitKnowledgeForm(form) {
+    const submitButton = form.querySelector('[type="submit"]');
+    const originalText = submitButton.textContent;
+    const processingStatus = document.getElementById('processing-status');
+    const submitResult = document.getElementById('submit-result');
+    
+    console.log('原始按钮文本:', originalText); // 调试日志
+    
+    try {
+        // 验证表单
+        const validation = validateKnowledgeForm(form);
+        if (!validation.valid) {
+            showError(validation.message);
+            return;
+        }
+        
+        // 更新按钮状态 - 锁定按钮
+        submitButton.textContent = window.t('add_knowledge.submitting');
+        submitButton.disabled = true;
+        
+        console.log('按钮文本已更新为:', window.t('add_knowledge.submitting')); // 调试日志
+        
+        // 隐藏之前的结果
+        submitResult.classList.add('hidden');
+        
+        // 显示处理状态
+        processingStatus.classList.remove('hidden');
+        document.getElementById('processing-message').textContent =
+            window.t('add_knowledge.file_reading', '正在处理您的知识内容，请稍候...');
+        
+        showLoading();
+        
+        // 准备表单数据
+        const formData = new FormData(form);
+        const inputMethod = formData.get('input-method');
+        
+        let data = {
+            description: formData.get('description') || '文本信息',
+            name: formData.get('name') || null,
+            reference_time: formData.get('reference_time') || null
+        };
+        
+        // 根据输入方式获取内容
+        if (inputMethod === 'text') {
+            data.content = formData.get('content');
+        } else if (inputMethod === 'file') {
+            data.content = formData.get('file-content');
+        }
+        
+        // 提交到API
+        const result = await api.addTextEpisode(data);
+        
+        if (result.success) {
+            // 显示成功结果
+            showSubmitResult(true, result.message, result.data);
+            showSuccess(window.t('add_knowledge.submit_success'));
+            resetForm(); // 重置表单
+        } else {
+            throw new Error(result.message || '提交失败');
+        }
+        
+    } catch (error) {
+        console.error('知识添加失败:', error);
+        // 显示失败结果
+        showSubmitResult(false, error.message || window.t('add_knowledge.submit_error'));
+        showError(error.message || window.t('add_knowledge.submit_error'));
+    } finally {
+        // 恢复按钮状态
+        console.log('恢复按钮文本为:', originalText); // 调试日志
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+        processingStatus.classList.add('hidden');
+        hideLoading();
+    }
+}
+
+/**
+ * 显示提交结果
+ */
+function showSubmitResult(success, message, data = null) {
+    const submitResult = document.getElementById('submit-result');
+    const resultCard = document.getElementById('result-card');
+    const resultIcon = document.getElementById('result-icon');
+    const resultTitle = document.getElementById('result-title');
+    const resultMessage = document.getElementById('result-message');
+    const resultDetails = document.getElementById('result-details');
+    
+    // 设置结果样式
+    if (success) {
+        resultCard.className = 'card border-l-4 border-success';
+        resultIcon.innerHTML = '<svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        resultTitle.textContent = window.t('add_knowledge.result_success');
+    } else {
+        resultCard.className = 'card border-l-4 border-error';
+        resultIcon.innerHTML = '<svg class="w-6 h-6 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        resultTitle.textContent = window.t('add_knowledge.result_failed');
+    }
+    
+    resultMessage.textContent = message;
+    
+    // 显示详细数据（如果有）
+    if (data) {
+        resultDetails.classList.remove('hidden');
+        document.getElementById('result-episode-name').textContent = data.name || 'N/A';
+        document.getElementById('result-episode-description').textContent = data.description || 'N/A';
+        document.getElementById('result-content-preview').textContent = data.content_preview || 'N/A';
+        document.getElementById('result-reference-time').textContent = data.reference_time || 'N/A';
+        document.getElementById('result-episode-type').textContent = data.episode_type || 'N/A';
+    } else {
+        resultDetails.classList.add('hidden');
+    }
+    
+    // 显示结果区域
+    submitResult.classList.remove('hidden');
+    
+    // 结果保持显示，不自动隐藏，直到下次提交时更新内容
+}
+
+/**
+ * 关闭结果显示
+ */
+function closeResult() {
+    const submitResult = document.getElementById('submit-result');
+    submitResult.classList.add('hidden');
+}
+
+/**
+ * 验证知识表单
+ */
+function validateKnowledgeForm(form) {
+    const formData = new FormData(form);
+    const inputMethod = formData.get('input-method');
+    
+    if (inputMethod === 'text') {
+        const content = formData.get('content');
+        if (!content || content.trim() === '') {
+            return { valid: false, message: window.t('add_knowledge.validation.content_required') };
+        }
+    } else if (inputMethod === 'file') {
+        const fileContent = formData.get('file-content');
+        if (!fileContent || fileContent.trim() === '') {
+            return { valid: false, message: window.t('add_knowledge.validation.file_required') };
+        }
+    }
+    
+    // 验证参考时间格式
+    const referenceTime = formData.get('reference_time');
+    if (referenceTime) {
+        const timePattern = /^\d{6}$|^\d{8}$/;
+        if (!timePattern.test(referenceTime)) {
+            return { valid: false, message: window.t('add_knowledge.validation.reference_time_invalid') };
+        }
+    }
+    
+    return { valid: true };
+}
+
+/**
+ * 绑定参考时间输入验证
+ */
+function bindReferenceTimeValidation() {
+    const referenceTimeInput = document.getElementById('reference-time');
+    
+    referenceTimeInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        if (value === '') return;
+        
+        const timePattern = /^\d{6}$|^\d{8}$/;
+        if (!timePattern.test(value)) {
+            this.classList.add('input-error');
+        } else {
+            this.classList.remove('input-error');
+        }
+    });
+    
+    referenceTimeInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (value === '') return;
+        
+        // 自动格式化
+        if (value.length === 6) {
+            // yyyyMM -> yyyyMMdd (添加01)
+            this.value = value + '01';
+        }
+    });
+}
+
+/**
+ * 重置表单
+ */
+function resetForm() {
+    const form = document.getElementById('add-knowledge-form');
+    form.reset();
+    
+    // 重置文件信息
+    document.getElementById('file-content').value = '';
+    document.getElementById('selected-file-info').classList.add('hidden');
+    
+    // 重置输入方式
+    document.getElementById('input-method-text').checked = true;
+    document.getElementById('text-input-section').classList.remove('hidden');
+    document.getElementById('file-upload-section').classList.add('hidden');
+    
+    // 清除错误状态
+    const errorInputs = form.querySelectorAll('.input-error');
+    errorInputs.forEach(input => input.classList.remove('input-error'));
+}
+
+/**
+ * 页面加载完成后初始化
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // 确保i18n系统已加载
+    if (window.i18n && window.i18n.translations) {
+        initAddKnowledgePage();
+    } else {
+        // 等待i18n加载完成
+        window.addEventListener('languagechange', function() {
+            if (window.i18n && window.i18n.translations) {
+                initAddKnowledgePage();
+            }
+        }, { once: true });
+    }
+});
+</script>
+{% endblock %}

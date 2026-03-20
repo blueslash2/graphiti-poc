@@ -1,0 +1,790 @@
+{% extends "base.html" %}
+
+{% block title %}知识查询 - {{ page_title | default('A股年报Narrative-KG测试系统') }}{% endblock %}
+
+{% block content %}
+<!-- 知识查询页面内容 -->
+<div class="space-y-6">
+    
+    <!-- 页面标题和说明 -->
+    <div class="card animate-fade-in">
+        <div class="card-body">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-text mb-2" data-i18n="search.title">
+                        知识查询
+                    </h1>
+                    <!-- 原文：知识查询 -->
+                    <p class="text-text-secondary" data-i18n="search.subtitle">
+                        在知识图谱中搜索相关信息
+                    </p>
+                    <!-- 原文：在知识图谱中搜索相关信息 -->
+                </div>
+                <div class="hidden sm:block">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 搜索表单 -->
+    <div class="card animate-slide-up">
+        <div class="card-body">
+            <form id="search-form" class="space-y-4">
+                <!-- 基本搜索 -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex-1">
+                        <label for="search-input" class="block text-sm font-medium text-text mb-2" data-i18n="search.search_input">
+                            搜索关键词
+                        </label>
+                        <!-- 原文：搜索关键词 -->
+                        <input type="text" id="search-input" name="query" 
+                               class="input w-full" 
+                               placeholder="{{ '输入关键词搜索知识图谱，支持实体名称、关系类型等...' }}"
+                               data-i18n-placeholder="search.search_placeholder"
+                               required>
+                        <!-- 原文：输入关键词搜索知识图谱，支持实体名称、关系类型等... -->
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" 
+                                class="btn btn-primary px-6"
+                                data-i18n="search.search_button">
+                            搜索
+                        </button>
+                        <!-- 原文：搜索 -->
+                    </div>
+                </div>
+                
+                <!-- 高级搜索选项 -->
+                <div class="border-t border-border pt-4">
+                    <button type="button" 
+                            id="advanced-search-toggle"
+                            class="text-sm text-primary hover:text-primary-dark transition-colors flex items-center space-x-1">
+                        <span data-i18n="search.advanced_search">高级搜索</span>
+                        <!-- 原文：高级搜索 -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <div id="advanced-search-panel" class="hidden mt-4 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- 结果数量 -->
+                            <div>
+                                <label for="result-limit" class="block text-sm font-medium text-text mb-2" data-i18n="search.result_limit">
+                                    结果数量
+                                </label>
+                                <!-- 原文：结果数量 -->
+                                <select id="result-limit" name="limit" class="input w-full">
+                                    <option value="5">5</option>
+                                    <option value="10" selected>10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 实体类型 -->
+                            <div>
+                                <label for="entity-type" class="block text-sm font-medium text-text mb-2" data-i18n="search.entity_type">
+                                    实体类型
+                                </label>
+                                <!-- 原文：实体类型 -->
+                                <select id="entity-type" name="entity_type" class="input w-full">
+                                    <option value="" data-i18n="search.all_types">全部类型</option>
+                                    <!-- 原文：全部类型 -->
+                                    <option value="PERSON" data-i18n="entity_types.PERSON">人员</option>
+                                    <!-- 原文：人员 -->
+                                    <option value="COMPANY" data-i18n="entity_types.COMPANY">公司</option>
+                                    <!-- 原文：公司 -->
+                                    <option value="ORGANIZATION" data-i18n="entity_types.ORGANIZATION">组织</option>
+                                    <!-- 原文：组织 -->
+                                    <option value="POSITION" data-i18n="entity_types.POSITION">职位</option>
+                                    <!-- 原文：职位 -->
+                                    <option value="SKILL" data-i18n="entity_types.SKILL">技能</option>
+                                    <!-- 原文：技能 -->
+                                </select>
+                            </div>
+                            
+                            <!-- 排序方式 -->
+                            <div>
+                                <label for="sort-by" class="block text-sm font-medium text-text mb-2" data-i18n="search.sort_by">
+                                    排序方式
+                                </label>
+                                <!-- 原文：排序方式 -->
+                                <select id="sort-by" name="sort_by" class="input w-full">
+                                    <option value="relevance" data-i18n="search.sort_relevance">相关度</option>
+                                    <!-- 原文：相关度 -->
+                                    <option value="time" data-i18n="search.sort_time">时间</option>
+                                    <!-- 原文：时间 -->
+                                    <option value="name" data-i18n="search.sort_name">名称</option>
+                                    <!-- 原文：名称 -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 搜索提示 -->
+                        <div class="bg-surface/50 rounded-lg p-4">
+                            <p class="text-sm text-text-secondary" data-i18n="search.search_tips">
+                                搜索提示：可以尝试输入人名、公司名、职位、技能等关键词
+                            </p>
+                            <!-- 原文：搜索提示：可以尝试输入人名、公司名、职位、技能等关键词 -->
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 搜索结果区域 -->
+    <div id="search-results-container" class="space-y-4">
+        <!-- 初始状态 -->
+        <div id="search-initial" class="card text-center py-12">
+            <div class="card-body">
+                <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-text mb-2" data-i18n="search.no_results">
+                    请输入搜索关键词开始查询
+                </h3>
+                <!-- 原文：请输入搜索关键词开始查询 -->
+                <p class="text-text-secondary" data-i18n="search.search_tips">
+                    搜索提示：可以尝试输入人名、公司名、职位、技能等关键词
+                </p>
+                <!-- 原文：搜索提示：可以尝试输入人名、公司名、职位、技能等关键词 -->
+            </div>
+        </div>
+        
+        <!-- 加载状态 -->
+        <div id="search-loading" class="card text-center py-12 hidden">
+            <div class="card-body">
+                <div class="spinner-lg text-primary mx-auto mb-4"></div>
+                <h3 class="text-lg font-medium text-text mb-2" data-i18n="search.searching">
+                    搜索中...
+                </h3>
+                <!-- 原文：搜索中... -->
+                <p class="text-text-secondary">
+                    正在知识图谱中查找相关信息，请稍候...
+                </p>
+            </div>
+        </div>
+        
+        <!-- 结果展示区域 -->
+        <div id="search-results" class="hidden">
+            <!-- 结果统计 -->
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-text" id="search-results-info"></h3>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button type="button" 
+                            id="clear-search-btn"
+                            class="btn btn-ghost btn-sm"
+                            data-i18n="search.clear_search">
+                        清空搜索
+                    </button>
+                    <!-- 原文：清空搜索 -->
+                    <button type="button" 
+                            id="export-results-btn"
+                            class="btn btn-outline btn-sm"
+                            data-i18n="search.export_results">
+                        导出结果
+                    </button>
+                    <!-- 原文：导出结果 -->
+                </div>
+            </div>
+            
+            <!-- 结果列表 -->
+            <div id="search-results-list" class="space-y-4">
+                <!-- 搜索结果将在这里动态生成 -->
+            </div>
+            
+            <!-- 分页 -->
+            <div id="search-pagination" class="flex items-center justify-center space-x-2 mt-6">
+                <!-- 分页控件将在这里动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 无结果状态 -->
+        <div id="search-no-results" class="card text-center py-12 hidden">
+            <div class="card-body">
+                <div class="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.562M15 6.306a7.962 7.962 0 00-6 0m6 0V5a2 2 0 00-2-2H9a2 2 0 00-2 2v1.306m8 0V19a2 2 0 01-2 2H9a2 2 0 01-2-2v-8.694"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-text mb-2" data-i18n="search.no_results">
+                    未找到相关结果
+                </h3>
+                <!-- 原文：未找到相关结果 -->
+                <p class="text-text-secondary" data-i18n="search.search_tips">
+                    搜索提示：可以尝试使用不同的关键词或调整搜索条件
+                </p>
+                <!-- 原文：搜索提示：可以尝试使用不同的关键词或调整搜索条件 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 最近搜索历史 -->
+    <div class="card animate-scale-in" style="animation-delay: 0.3s">
+        <div class="card-header">
+            <h3 class="text-lg font-semibold text-text">最近搜索</h3>
+        </div>
+        <div class="card-body">
+            <div id="recent-searches" class="space-y-2">
+                <!-- 最近搜索历史将在这里显示 -->
+                <p class="text-sm text-text-secondary text-center">暂无搜索历史</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 知识查询页面特定脚本
+
+/**
+ * 搜索状态管理
+ */
+class SearchManager {
+    constructor() {
+        this.currentQuery = '';
+        this.currentResults = [];
+        this.currentPage = 1;
+        this.totalResults = 0;
+        this.resultsPerPage = 10;
+        this.searchHistory = this.loadSearchHistory();
+        this.init();
+    }
+    
+    init() {
+        this.bindEvents();
+        this.renderRecentSearches();
+        this.loadSearchHistory();
+    }
+    
+    /**
+     * 绑定事件
+     */
+    bindEvents() {
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const advancedToggle = document.getElementById('advanced-search-toggle');
+        const advancedPanel = document.getElementById('advanced-search-panel');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const exportResultsBtn = document.getElementById('export-results-btn');
+        
+        // 表单提交
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.performSearch();
+        });
+        
+        // 实时搜索（可选）
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (e.target.value.trim().length > 2) {
+                    this.performSearch();
+                }
+            }, 500);
+        });
+        
+        // 高级搜索切换
+        advancedToggle.addEventListener('click', () => {
+            const isHidden = advancedPanel.classList.contains('hidden');
+            advancedPanel.classList.toggle('hidden');
+            
+            // 更新按钮文本和图标
+            const toggleText = advancedToggle.querySelector('span');
+            const toggleIcon = advancedToggle.querySelector('svg');
+            
+            if (isHidden) {
+                toggleText.textContent = window.t('search.advanced_search');
+                toggleIcon.style.transform = 'rotate(180deg)';
+            } else {
+                toggleText.textContent = window.t('search.advanced_search');
+                toggleIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+        
+        // 清空搜索
+        clearSearchBtn.addEventListener('click', () => {
+            this.clearSearch();
+        });
+        
+        // 导出结果
+        exportResultsBtn.addEventListener('click', () => {
+            this.exportResults();
+        });
+    }
+    
+    /**
+     * 执行搜索
+     */
+    async performSearch() {
+        const searchInput = document.getElementById('search-input');
+        const query = searchInput.value.trim();
+        
+        if (!query) {
+            showError('请输入搜索关键词');
+            return;
+        }
+        
+        // 保存到搜索历史
+        this.addToSearchHistory(query);
+        
+        // 显示加载状态
+        this.showLoadingState();
+        
+        try {
+            // 获取搜索参数
+            const formData = new FormData(document.getElementById('search-form'));
+            const params = {
+                query: query,
+                limit: parseInt(formData.get('limit')) || 10,
+                entity_type: formData.get('entity_type') || '',
+                sort_by: formData.get('sort_by') || 'relevance'
+            };
+            
+            showLoading();
+            
+            // 调用API搜索
+            const result = await api.searchEntities(query, params.limit);
+            
+            hideLoading();
+            
+            if (result.success) {
+                this.displayResults(result, query);
+            } else {
+                throw new Error(result.message || '搜索失败');
+            }
+            
+        } catch (error) {
+            hideLoading();
+            console.error('搜索失败:', error);
+            this.showErrorState(error.message || '搜索失败，请稍后重试');
+        }
+    }
+    
+    /**
+     * 显示搜索结果
+     */
+    displayResults(result, query) {
+        this.currentQuery = query;
+        this.currentResults = result.results || [];
+        this.totalResults = result.total_count || 0;
+        this.currentPage = 1;
+        
+        // 隐藏初始状态
+        document.getElementById('search-initial').classList.add('hidden');
+        document.getElementById('search-loading').classList.add('hidden');
+        
+        if (this.currentResults.length === 0) {
+            this.showNoResultsState();
+            return;
+        }
+        
+        // 显示结果区域
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.classList.remove('hidden');
+        
+        // 更新结果统计
+        const resultsInfo = document.getElementById('search-results-info');
+        resultsInfo.textContent = window.t('search.results_count', { count: this.totalResults });
+        
+        // 渲染结果列表
+        this.renderResultsList();
+        
+        // 渲染分页
+        this.renderPagination();
+    }
+    
+    /**
+     * 渲染结果列表
+     */
+    renderResultsList() {
+        const resultsList = document.getElementById('search-results-list');
+        
+        if (this.currentResults.length === 0) {
+            resultsList.innerHTML = `
+                <div class="text-center py-8">
+                    <p class="text-text-secondary">${window.t('search.no_results')}</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const resultsHtml = this.currentResults.map((result, index) => {
+            const startIndex = (this.currentPage - 1) * this.resultsPerPage + index + 1;
+            const relevanceScore = Math.round((result.relevance_score || 0) * 100);
+            const entityTypeName = this.getEntityTypeName(result.entity_type);
+            
+            return `
+                <div class="result-item p-4 border border-border rounded-lg hover:bg-surface/50 transition-colors">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-text mb-1">${this.escapeHtml(result.name)}</h3>
+                            <div class="flex items-center space-x-2 text-sm text-text-secondary mb-2">
+                                <span class="bg-primary/10 text-primary px-2 py-1 rounded text-xs">${entityTypeName}</span>
+                                <span>相关度: ${relevanceScore}%</span>
+                            </div>
+                            ${result.summary ? `<p class="text-text-secondary text-sm mb-2">${this.escapeHtml(result.summary)}</p>` : ''}
+                        </div>
+                        <div class="flex-shrink-0 ml-4">
+                            <span class="text-sm text-text-secondary">#${startIndex}</span>
+                        </div>
+                    </div>
+                    
+                    ${result.properties && Object.keys(result.properties).length > 0 ? `
+                        <div class="mt-3 pt-3 border-t border-border">
+                            <div class="flex flex-wrap gap-2">
+                                ${Object.entries(result.properties).map(([key, value]) => `
+                                    <span class="inline-flex items-center px-2 py-1 bg-surface text-text-secondary text-xs rounded">
+                                        ${this.escapeHtml(key)}: ${this.escapeHtml(String(value))}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="mt-3 flex items-center justify-between">
+                        <div class="text-xs text-text-secondary">
+                            ${result.entity_type ? `类型: ${entityTypeName}` : ''}
+                        </div>
+                        <button type="button" 
+                                class="text-sm text-primary hover:text-primary-dark transition-colors"
+                                onclick="viewEntityDetails('${result.name}', '${result.entity_type || ''}')">
+                            ${window.t('search.view_details')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        resultsList.innerHTML = resultsHtml;
+    }
+    
+    /**
+     * 渲染分页
+     */
+    renderPagination() {
+        const totalPages = Math.ceil(this.totalResults / this.resultsPerPage);
+        const paginationContainer = document.getElementById('search-pagination');
+        
+        if (totalPages <= 1) {
+            paginationContainer.innerHTML = '';
+            return;
+        }
+        
+        let paginationHtml = '';
+        
+        // 上一页按钮
+        if (this.currentPage > 1) {
+            paginationHtml += `
+                <button type="button" 
+                        class="btn btn-ghost btn-sm"
+                        onclick="searchManager.goToPage(${this.currentPage - 1})">
+                    上一页
+                </button>
+            `;
+        }
+        
+        // 页码按钮
+        const startPage = Math.max(1, this.currentPage - 2);
+        const endPage = Math.min(totalPages, this.currentPage + 2);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const isActive = i === this.currentPage;
+            paginationHtml += `
+                <button type="button" 
+                        class="btn ${isActive ? 'btn-primary' : 'btn-ghost'} btn-sm"
+                        onclick="searchManager.goToPage(${i})">
+                    ${i}
+                </button>
+            `;
+        }
+        
+        // 下一页按钮
+        if (this.currentPage < totalPages) {
+            paginationHtml += `
+                <button type="button" 
+                        class="btn btn-ghost btn-sm"
+                        onclick="searchManager.goToPage(${this.currentPage + 1})">
+                    下一页
+                </button>
+            `;
+        }
+        
+        paginationContainer.innerHTML = paginationHtml;
+    }
+    
+    /**
+     * 跳转到指定页面
+     */
+    goToPage(page) {
+        if (page < 1 || page > Math.ceil(this.totalResults / this.resultsPerPage)) {
+            return;
+        }
+        
+        this.currentPage = page;
+        this.renderResultsList();
+        this.renderPagination();
+        
+        // 滚动到结果顶部
+        document.getElementById('search-results').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    /**
+     * 显示加载状态
+     */
+    showLoadingState() {
+        document.getElementById('search-initial').classList.add('hidden');
+        document.getElementById('search-results').classList.add('hidden');
+        document.getElementById('search-no-results').classList.add('hidden');
+        document.getElementById('search-loading').classList.remove('hidden');
+    }
+    
+    /**
+     * 显示无结果状态
+     */
+    showNoResultsState() {
+        document.getElementById('search-initial').classList.add('hidden');
+        document.getElementById('search-loading').classList.add('hidden');
+        document.getElementById('search-results').classList.add('hidden');
+        document.getElementById('search-no-results').classList.remove('hidden');
+    }
+    
+    /**
+     * 显示错误状态
+     */
+    showErrorState(message) {
+        document.getElementById('search-initial').classList.add('hidden');
+        document.getElementById('search-loading').classList.add('hidden');
+        document.getElementById('search-results').classList.add('hidden');
+        document.getElementById('search-no-results').classList.remove('hidden');
+        
+        // 更新错误消息
+        const noResultsMessage = document.querySelector('#search-no-results p:last-child');
+        if (noResultsMessage) {
+            noResultsMessage.textContent = message;
+        }
+    }
+    
+    /**
+     * 清空搜索
+     */
+    clearSearch() {
+        document.getElementById('search-input').value = '';
+        document.getElementById('search-results').classList.add('hidden');
+        document.getElementById('search-initial').classList.remove('hidden');
+        document.getElementById('search-no-results').classList.add('hidden');
+        
+        this.currentQuery = '';
+        this.currentResults = [];
+        this.currentPage = 1;
+        this.totalResults = 0;
+    }
+    
+    /**
+     * 导出结果
+     */
+    exportResults() {
+        if (this.currentResults.length === 0) {
+            showError('没有可导出的结果');
+            return;
+        }
+        
+        try {
+            const exportData = {
+                query: this.currentQuery,
+                timestamp: new Date().toISOString(),
+                total_count: this.totalResults,
+                results: this.currentResults
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `search_results_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('搜索结果已导出');
+        } catch (error) {
+            console.error('导出失败:', error);
+            showError('导出失败，请稍后重试');
+        }
+    }
+    
+    /**
+     * 获取实体类型显示名称
+     */
+    getEntityTypeName(entityType) {
+        if (!entityType) return '未知';
+        return window.t(`entity_types.${entityType}`, {}, entityType);
+    }
+    
+    /**
+     * HTML转义
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    /**
+     * 添加到搜索历史
+     */
+    addToSearchHistory(query) {
+        // 移除重复项
+        this.searchHistory = this.searchHistory.filter(item => item !== query);
+        
+        // 添加到开头
+        this.searchHistory.unshift(query);
+        
+        // 限制历史记录数量
+        if (this.searchHistory.length > 10) {
+            this.searchHistory = this.searchHistory.slice(0, 10);
+        }
+        
+        // 保存到本地存储
+        this.saveSearchHistory();
+        
+        // 更新显示
+        this.renderRecentSearches();
+    }
+    
+    /**
+     * 加载搜索历史
+     */
+    loadSearchHistory() {
+        try {
+            const saved = localStorage.getItem('searchHistory');
+            return saved ? JSON.parse(saved) : [];
+        } catch (error) {
+            console.error('加载搜索历史失败:', error);
+            return [];
+        }
+    }
+    
+    /**
+     * 保存搜索历史
+     */
+    saveSearchHistory() {
+        try {
+            localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
+        } catch (error) {
+            console.error('保存搜索历史失败:', error);
+        }
+    }
+    
+    /**
+     * 渲染最近搜索
+     */
+    renderRecentSearches() {
+        const container = document.getElementById('recent-searches');
+        
+        if (this.searchHistory.length === 0) {
+            container.innerHTML = '<p class="text-sm text-text-secondary text-center">暂无搜索历史</p>';
+            return;
+        }
+        
+        const historyHtml = this.searchHistory.map(query => `
+            <div class="flex items-center justify-between p-2 hover:bg-surface rounded group">
+                <button type="button" 
+                        class="flex-1 text-left text-sm text-text hover:text-primary transition-colors"
+                        onclick="searchManager.searchFromHistory('${this.escapeHtml(query)}')">
+                    ${this.escapeHtml(query)}
+                </button>
+                <button type="button" 
+                        class="opacity-0 group-hover:opacity-100 text-xs text-text-secondary hover:text-error transition-opacity"
+                        onclick="searchManager.removeFromHistory('${this.escapeHtml(query)}')">
+                    删除
+                </button>
+            </div>
+        `).join('');
+        
+        container.innerHTML = historyHtml;
+    }
+    
+    /**
+     * 从历史记录搜索
+     */
+    searchFromHistory(query) {
+        document.getElementById('search-input').value = query;
+        this.performSearch();
+    }
+    
+    /**
+     * 从历史记录删除
+     */
+    removeFromHistory(query) {
+        this.searchHistory = this.searchHistory.filter(item => item !== query);
+        this.saveSearchHistory();
+        this.renderRecentSearches();
+    }
+}
+
+/**
+ * 查看实体详情
+ */
+function viewEntityDetails(name, entityType) {
+    console.log('查看实体详情:', name, entityType);
+    // 这里可以实现查看详情的功能
+    showNotification(`查看详情: ${name}`, 'info');
+}
+
+/**
+ * 初始化搜索页面
+ */
+function initSearchPage() {
+    console.log('初始化搜索页面');
+    
+    // 创建搜索管理器实例
+    window.searchManager = new SearchManager();
+    
+    // 如果有URL参数中的搜索词，自动执行搜索
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('query');
+    if (query) {
+        document.getElementById('search-input').value = query;
+        // 延迟执行搜索，确保页面完全加载
+        setTimeout(() => {
+            searchManager.performSearch();
+        }, 100);
+    }
+}
+
+/**
+ * 页面加载完成后初始化
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // 确保i18n系统已加载
+    if (window.i18n && window.i18n.translations) {
+        initSearchPage();
+    } else {
+        // 等待i18n加载完成
+        window.addEventListener('languagechange', function() {
+            if (window.i18n && window.i18n.translations) {
+                initSearchPage();
+            }
+        }, { once: true });
+    }
+});
+</script>
+{% endblock %}

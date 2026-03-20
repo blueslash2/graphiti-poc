@@ -1,0 +1,162 @@
+/**
+ * 首页专用布局样式
+ * 三行布局：欢迎词、数据指标、知识图谱预览
+ */
+
+/* 首页主容器 */
+.home-dashboard {
+  min-height: 100%;
+  padding: 1.5rem;
+}
+
+/* 第一行：欢迎词区域 */
+.welcome-section {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.welcome-content h1 {
+  margin: 0;
+  line-height: 1.3;
+}
+
+.welcome-content p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 第二行：数据指标区域 */
+.metrics-section {
+  margin-bottom: 1.5rem;
+}
+
+.metrics-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.metric-card {
+  flex: 1;
+  min-width: 200px;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.metric-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-info p:first-child {
+  margin-bottom: 0.25rem;
+}
+
+.metric-icon {
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+/* 第三行：知识图谱预览区域 */
+.graph-section {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.graph-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background-color: rgba(0, 0, 0, 0.02);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.graph-content {
+  padding: 1.5rem;
+  position: relative;
+}
+
+.graph-visualization {
+  min-height: 400px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .home-dashboard {
+    padding: 1rem;
+  }
+  
+  .metrics-row {
+    flex-direction: column;
+  }
+  
+  .metric-card {
+    min-width: auto;
+  }
+  
+  .graph-visualization {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .welcome-section {
+    padding: 0.75rem 1rem;
+    min-height: 50px;
+  }
+  
+  .welcome-content h1 {
+    font-size: 1.125rem;
+  }
+  
+  .welcome-content p {
+    font-size: 0.875rem;
+  }
+  
+  .graph-visualization {
+    min-height: 250px;
+  }
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .welcome-section,
+[data-theme="dark"] .metric-card,
+[data-theme="dark"] .graph-section {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .graph-header {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] .graph-visualization {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}

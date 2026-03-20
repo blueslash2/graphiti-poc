@@ -24,7 +24,7 @@ class Config:
     OPENAI_EMBEDDING_MODEL = os.environ.get('OPENAI_EMBEDDING_MODEL', 'bge-m3')
     OPENAI_EMBEDDING_DIM = int(os.environ.get('OPENAI_EMBEDDING_DIM', '1024'))
     # 日志配置
-    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG')
 
     @classmethod
     def get_neo4j_config(cls) -> dict:

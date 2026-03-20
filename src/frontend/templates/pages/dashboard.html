@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}首页面板 - {{ page_title | default('A股年报Narrative-KG测试系统') }}{% endblock %}
+
+{% block content %}
+<!-- 新的三行布局首页 -->
+<div class="home-dashboard space-y-6">
+    
+    <!-- 第一行：简化的欢迎词区域（较矮） -->
+    <div class="welcome-section animate-fade-in">
+        <div class="welcome-content">
+            <h1 class="text-xl font-bold text-text mb-1" data-i18n="dashboard.welcome">
+                欢迎使用 A股年报Narrative-KG测试系统
+            </h1>
+            <p class="text-text-secondary text-sm" data-i18n="dashboard.subtitle">
+                智能化知识管理与图谱构建平台
+            </p>
+        </div>
+    </div>
+    
+    <!-- 第二行：数据指标区域（并排两个板块） -->
+    <div class="metrics-section">
+        <div class="metrics-row">
+            <!-- 知识总量 -->
+            <div class="metric-card animate-slide-up" style="animation-delay: 0.1s">
+                <div class="metric-content">
+                    <div class="metric-info">
+                        <p class="text-sm text-text-secondary mb-1" data-i18n="dashboard.total_knowledge">
+                            知识总量
+                        </p>
+                        <p class="text-2xl font-bold text-text" id="total-knowledge">0</p>
+                    </div>
+                    <div class="metric-icon">
+                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 今日新增 -->
+            <div class="metric-card animate-slide-up" style="animation-delay: 0.2s">
+                <div class="metric-content">
+                    <div class="metric-info">
+                        <p class="text-sm text-text-secondary mb-1" data-i18n="dashboard.today_added">
+                            今日新增
+                        </p>
+                        <p class="text-2xl font-bold text-success" id="today-added">0</p>
+                    </div>
+                    <div class="metric-icon">
+                        <div class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 第三行：知识图谱预览区域（接近正方形，较高） -->
+    <div class="graph-section animate-scale-in" style="animation-delay: 0.3s">
+        <div class="graph-header">
+            <h2 class="text-lg font-semibold text-text" data-i18n="dashboard.knowledge_graph_preview">
+                知识图谱预览
+            </h2>
+            <button type="button"
+                    class="btn btn-outline btn-sm"
+                    onclick="viewFullGraph()"
+                    data-i18n="dashboard.view_full_graph">
+                查看完整图谱
+            </button>
+        </div>
+        <div class="graph-content">
+            <!-- 图谱可视化容器 -->
+            <div id="knowledge-graph-preview" class="graph-visualization
+                                                     flex items-center justify-center relative">
+                
+                <!-- 加载状态 -->
+                <div id="graph-loading" class="text-center">
+                    <div class="spinner-lg text-primary mb-4"></div>
+                    <p class="text-text-secondary" data-i18n="common.loading">
+                        加载中...
+                    </p>
+                </div>
+                
+                <!-- 空状态 -->
+                <div id="graph-empty" class="text-center hidden">
+                    <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-text mb-2" data-i18n="dashboard.no_graph_data">
+                        暂无图谱数据，请先添加知识内容
+                    </h3>
+                    <p class="text-text-secondary mb-4">
+                        知识图谱需要先有数据才能显示可视化结果
+                    </p>
+                    <a href="/add-knowledge" class="btn btn-primary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        添加知识
+                    </a>
+                </div>
+                
+                <!-- 图谱内容（预留） -->
+                <div id="graph-content" class="w-full h-full hidden">
+                    <!-- 这里将显示实际的知识图谱 -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-primary mb-2">知识图谱</div>
+                            <div class="text-text-secondary">图谱可视化功能开发中...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图谱工具栏 -->
+                <div id="graph-toolbar" class="absolute top-4 right-4 flex space-x-2 hidden">
+                    <button type="button"
+                            class="p-2 bg-surface-elevated rounded-md border border-border
+                                   text-text-secondary hover:text-text transition-colors"
+                            title="放大">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                        </svg>
+                    </button>
+                    <button type="button"
+                            class="p-2 bg-surface-elevated rounded-md border border-border
+                                   text-text-secondary hover:text-text transition-colors"
+                            title="缩小">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path>
+                        </svg>
+                    </button>
+                    <button type="button"
+                            class="p-2 bg-surface-elevated rounded-md border border-border
+                                   text-text-secondary hover:text-text transition-colors"
+                            title="重置视图">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 首页面板特定脚本
+
+/**
+ * 查看完整图谱
+ */
+function viewFullGraph() {
+    // 这里可以添加跳转到完整图谱页面的逻辑
+    console.log('查看完整图谱功能开发中...');
+    showNotification('完整图谱功能开发中', 'info');
+}
+
+/**
+ * 初始化知识图谱预览
+ */
+async function initKnowledgeGraphPreview() {
+    const loadingEl = document.getElementById('graph-loading');
+    const emptyEl = document.getElementById('graph-empty');
+    const contentEl = document.getElementById('graph-content');
+    const toolbarEl = document.getElementById('graph-toolbar');
+    
+    try {
+        // 模拟加载过程
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // 检查是否有数据（这里模拟空状态）
+        const hasData = false; // 实际应用中需要调用API检查
+        
+        loadingEl.classList.add('hidden');
+        
+        if (hasData) {
+            contentEl.classList.remove('hidden');
+            toolbarEl.classList.remove('hidden');
+            // 这里可以初始化实际的图谱可视化
+        } else {
+            emptyEl.classList.remove('hidden');
+        }
+        
+    } catch (error) {
+        console.error('加载知识图谱预览失败:', error);
+        loadingEl.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+    }
+}
+
+/**
+ * 加载统计数据
+ */
+async function loadDashboardStatistics() {
+    try {
+        // 这里应该调用实际的API获取统计数据
+        // 暂时使用模拟数据
+        const stats = {
+            total_knowledge: 0,
+            today_added: 0,
+            search_count: 0
+        };
+        
+        // 更新显示
+        document.getElementById('total-knowledge').textContent = stats.total_knowledge.toLocaleString();
+        document.getElementById('today-added').textContent = stats.today_added.toLocaleString();
+        document.getElementById('search-count').textContent = stats.search_count.toLocaleString();
+        
+    } catch (error) {
+        console.error('加载统计数据失败:', error);
+    }
+}
+
+/**
+ * 加载最近活动
+ */
+async function loadRecentActivities() {
+    try {
+        // 这里应该调用实际的API获取最近活动
+        // 暂时使用模拟数据
+        const activities = [
+            {
+                type: 'info',
+                message: '系统初始化完成',
+                time: '刚刚'
+            },
+            {
+                type: 'success',
+                message: '知识图谱服务启动',
+                time: '2分钟前'
+            },
+            {
+                type: 'warning',
+                message: '数据库连接成功',
+                time: '5分钟前'
+            }
+        ];
+        
+        const container = document.getElementById('recent-activities');
+        if (!container) return;
+        
+        const activitiesHtml = activities.map(activity => `
+            <div class="flex items-start space-x-3 p-3 bg-surface/50 rounded-lg">
+                <div class="w-2 h-2 bg-${activity.type} rounded-full mt-2 flex-shrink-0"></div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm text-text">${activity.message}</p>
+                    <p class="text-xs text-text-secondary">${activity.time}</p>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = activitiesHtml;
+        
+    } catch (error) {
+        console.error('加载最近活动失败:', error);
+    }
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化知识图谱预览
+    initKnowledgeGraphPreview();
+    
+    // 加载统计数据
+    loadDashboardStatistics();
+    
+    // 加载最近活动
+    loadRecentActivities();
+    
+    // 定期更新数据（每30秒）
+    setInterval(() => {
+        loadDashboardStatistics();
+        loadRecentActivities();
+    }, 30000);
+});
+</script>
+{% endblock %}

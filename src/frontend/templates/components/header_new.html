@@ -1,0 +1,243 @@
+<!-- 新的顶部通栏 - 使用布局系统 -->
+<div class="h-full w-full">
+    <div class="header-content">
+        
+        <!-- 左侧：企业Logo和项目Logo -->
+        <div class="flex items-center space-x-4 flex-shrink-0">
+            <!-- 企业Logo (左上) -->
+            <div class="flex items-center space-x-3">
+                <img src="/static/images/logo-company.png"
+                     alt="{{ company_name | default('企业Logo') }}"
+                     class="h-8 w-auto"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzMzOTlmZiIvPgo8dGV4dCB4PSIxNiIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkxPR088L3RleHQ+Cjwvc3ZnPgo='">
+                
+                <!-- 分隔线 -->
+                <div class="h-6 w-px bg-border"></div>
+                
+                <!-- 项目Logo (项目中居中) -->
+                <img src="/static/images/logo-project.png"
+                     alt="{{ project_name | default('项目Logo') }}"
+                     class="h-6 w-auto"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9IiMzMzk5ZmYiLz4KPHRleHQgeD0iMTIiIHk9IjE2IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkc8L3RleHQ+Cjwvc3ZnPgo='">
+            </div>
+        </div>
+        
+        <!-- 中间：项目名称（真正居中） -->
+        <div class="flex-1 flex justify-center">
+            <h1 class="text-lg font-semibold text-text" data-i18n="header.project_logo_alt">A股年报Narrative-KG测试系统</h1>
+        </div>
+        
+        <!-- 右侧：移动端菜单按钮、用户信息、主题切换、语言切换 -->
+        <div class="flex items-center space-x-2 flex-shrink-0">
+            
+            <!-- 移动端菜单按钮 -->
+            <button type="button"
+                    class="md:hidden p-1.5 rounded-md text-text-secondary hover:text-text hover:bg-surface transition-colors"
+                    data-sidebar-toggle
+                    title="切换菜单">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            
+            <!-- 主题切换（小按钮） -->
+            <div class="relative group">
+                <button type="button" 
+                        class="p-1.5 rounded-md text-text-secondary hover:text-text hover:bg-surface transition-colors"
+                        data-theme-toggle
+                        title="切换主题">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+                
+                <!-- 主题选择下拉菜单 -->
+                <div class="absolute right-0 top-full mt-2 w-32 bg-surface-elevated rounded-lg 
+                           shadow-lg border border-border hidden group-hover:block">
+                    <div class="p-1.5">
+                        <button type="button" 
+                                class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-surface 
+                                       transition-colors flex items-center"
+                                onclick="window.themeManager.setTheme('light')">
+                            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                            亮色
+                        </button>
+                        <button type="button" 
+                                class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-surface 
+                                       transition-colors flex items-center"
+                                onclick="window.themeManager.setTheme('dark')">
+                            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                            </svg>
+                            暗色
+                        </button>
+                        <button type="button" 
+                                class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-surface 
+                                       transition-colors flex items-center"
+                                onclick="window.themeManager.setTheme('auto')">
+                            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                            自动
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 语言切换（小按钮） -->
+            <div class="relative group">
+                <button type="button" 
+                        class="p-1.5 rounded-md text-text-secondary hover:text-text hover:bg-surface transition-colors"
+                        title="切换语言">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.769 7.459 11 10.188 11 13a8.001 8.001 0 018 8h-8V5z"></path>
+                    </svg>
+                </button>
+                
+                <!-- 语言选择下拉菜单 -->
+                <div class="absolute right-0 top-full mt-2 w-24 bg-surface-elevated rounded-lg 
+                           shadow-lg border border-border hidden group-hover:block">
+                    <div class="p-1.5">
+                        <button type="button" 
+                                class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-surface 
+                                       transition-colors"
+                                onclick="window.i18n.setLanguage('zh-CN')">
+                            中文
+                        </button>
+                        <button type="button" 
+                                class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-surface 
+                                       transition-colors"
+                                onclick="window.i18n.setLanguage('en-US')">
+                            English
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 当前用户信息 -->
+            <div class="flex items-center space-x-2 pl-2">
+                <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <div class="hidden md:block text-sm">
+                    <div class="font-medium text-text">当前用户</div>
+                    <div class="text-xs text-text-secondary">user@company.com</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- 顶部通栏样式 - 适配新布局系统 -->
+<style>
+/* 顶部通栏样式 - 现在由布局系统控制定位 */
+.header-content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+/* 下拉菜单动画 */
+.group:hover .group-hover\:block {
+    display: block;
+    animation: dropdownFadeInTop 0.2s ease-out;
+}
+
+@keyframes dropdownFadeInTop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 小按钮悬停效果 */
+button[data-theme-toggle]:hover,
+button[title="切换语言"]:hover {
+    background-color: var(--color-surface);
+}
+
+/* 响应式调整 - 适配新布局系统 */
+@media (max-width: 767px) {
+    .header-content {
+        padding: 0 0.75rem;
+    }
+    
+    /* 移动端隐藏项目名称 */
+    .header-content h1 {
+        font-size: 1rem;
+    }
+    
+    /* 移动端调整按钮大小 */
+    .header-content button[data-theme-toggle],
+    .header-content button[title="切换语言"] {
+        padding: 0.5rem;
+    }
+    
+    .header-content button svg {
+        width: 1rem;
+        height: 1rem;
+    }
+}
+</style>
+
+<script>
+// 顶部通栏JavaScript功能 - 适配新布局系统
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 主题切换功能（保持与原有主题管理器兼容）
+    const themeButtons = document.querySelectorAll('[data-theme-toggle]');
+    themeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+    
+    // 语言切换功能（保持与原有i18n管理器兼容）
+    const langButtons = document.querySelectorAll('button[title="切换语言"]');
+    langButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+    
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', function(e) {
+        const dropdowns = document.querySelectorAll('.group-hover\\:block');
+        dropdowns.forEach(dropdown => {
+            if (!dropdown.parentElement.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    });
+    
+    // 重新打开下拉菜单
+    const groups = document.querySelectorAll('.group');
+    groups.forEach(group => {
+        const button = group.querySelector('button');
+        const dropdown = group.querySelector('.group-hover\\:block');
+        
+        if (button && dropdown) {
+            button.addEventListener('mouseenter', function() {
+                dropdown.style.display = 'block';
+            });
+        }
+    });
+});
+</script>

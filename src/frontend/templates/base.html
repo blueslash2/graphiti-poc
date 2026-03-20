@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="{{ language | default('zh-CN') }}" data-theme="{{ theme | default('light') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description | default('A股年报Narrative-KG测试系统 - 智能化知识管理与图谱构建平台') }}">
+    <meta name="keywords" content="{{ keywords | default('知识图谱, 知识管理, Graphiti, 人工智能') }}">
+    <meta name="author" content="{{ author | default('Graphiti Team') }}">
+    
+    <!-- 页面标题 -->
+    <title>{% block title %}{{ page_title | default('A股年报Narrative-KG测试系统') }}{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+    
+    <!-- CSS 文件 -->
+    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <link href="/static/css/layout.css" rel="stylesheet">
+    <link href="/static/css/components.css" rel="stylesheet">
+    <link href="/static/css/themes.css" rel="stylesheet">
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+    
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 配置注入 - 在JavaScript中可用的全局配置 -->
+    <script>
+        window.FRONTEND_CONFIG = {
+            language: '{{ language | default("zh-CN") }}',
+            theme: '{{ theme | default("light") }}',
+            autoTheme: {{ auto_theme | default('true') | lower }},
+            apiBaseUrl: '{{ api_base_url | default("http://localhost:8000") }}',
+            apiTimeout: {{ api_timeout | default('30000') }},
+            maxFileSize: {{ max_file_size | default('10485760') }},
+            companyName: '{{ company_name | default("企业名称") }}',
+            projectName: '{{ project_name | default("A股年报Narrative-KG") }}',
+            version: '{{ version | default("1.0.0") }}'
+        };
+    </script>
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page_title | default('A股年报Narrative-KG测试系统') }}">
+    <meta property="og:description" content="{{ description | default('智能化知识管理与图谱构建平台') }}">
+    <meta property="og:url" content="{{ request.url }}">
+    
+    {% block head %}{% endblock %}
+</head>
+
+<body class="bg-background text-text font-sans antialiased">
+    <!-- 跳过导航链接（可访问性） -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 
+       bg-primary text-white px-4 py-2 rounded-md z-50">
+        跳转到主内容
+    </a>
+    
+    <!-- 全局加载指示器 -->
+    <div id="global-loading" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center h-full">
+            <div class="bg-surface-elevated rounded-lg p-6 shadow-lg">
+                <div class="flex items-center space-x-3">
+                    <div class="spinner text-primary"></div>
+                    <span data-i18n="common.loading">加载中...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 布局容器 -->
+    <div class="layout-container">
+        <!-- 顶部导航栏 -->
+        <header class="layout-header">
+            {% include 'components/header_new.html' %}
+        </header>
+        
+        <!-- 主体内容区域 -->
+        <main class="layout-main">
+            <!-- 侧边栏 -->
+            <nav id="sidebar" class="layout-sidebar">
+                {% include 'components/sidebar_simplified.html' %}
+            </nav>
+            
+            <!-- 遮罩层（移动端） -->
+            <div id="sidebar-overlay" class="layout-overlay" onclick="window.app.toggleSidebar()"></div>
+            
+            <!-- 主内容区域 -->
+            <div class="layout-content">
+                <div class="layout-content-inner">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </main>
+        
+        <!-- 底部页脚 -->
+        <footer class="layout-footer">
+            {% include 'components/footer.html' %}
+        </footer>
+    </div>
+    
+    <!-- 通知容器 -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <!-- JavaScript 文件 - 按依赖顺序加载 -->
+    <!-- 核心库 -->
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/theme.js"></script>
+    <script src="/static/js/api.js"></script>
+    
+    <!-- 主应用 -->
+    <script src="/static/js/app.js"></script>
+    
+    <!-- 页面特定脚本 -->
+    {% block scripts %}{% endblock %}
+    
+    <!-- 初始化脚本 -->
+    <script>
+        // 等待DOM加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保所有核心系统都已加载
+            if (window.i18n && window.themeManager && window.apiClient && window.app) {
+                console.log('A股年报Narrative-KG测试系统前端系统所有模块加载完成');
+            } else {
+                console.error('某些核心模块未能正确加载');
+            }
+        });
+        
+        // 全局错误处理
+        window.addEventListener('error', function(e) {
+            console.error('全局错误:', e.error);
+            // 可以在这里添加错误上报逻辑
+        });
+        
+        // Promise拒绝处理
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('未处理的Promise拒绝:', e.reason);
+            // 可以在这里添加错误上报逻辑
+        });
+    </script>
+</body>
+</html>
